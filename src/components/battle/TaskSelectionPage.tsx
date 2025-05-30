@@ -59,3 +59,5 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
     </div>
   );
 };
+
+export default TaskSelectionPage
