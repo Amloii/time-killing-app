@@ -22,12 +22,12 @@ const Button: React.FC<ButtonProps> = ({
   type = 'button',
   icon,
 }) => {
-  const baseClasses = 'font-medium rounded-md flex items-center justify-center transition-all';
+  const baseClasses = 'font-medium rounded-md flex items-center justify-center transition-all active:scale-95 touch-none';
   
   const variantClasses = {
-    primary: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400',
-    danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
+    primary: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 tap-highlight-transparent',
+    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 tap-highlight-transparent',
+    danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 tap-highlight-transparent',
   };
   
   const sizeClasses = {

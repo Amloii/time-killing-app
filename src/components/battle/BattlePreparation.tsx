@@ -115,7 +115,7 @@ const BattlePreparation: React.FC = () => {
   );
   
   return (
-    <div className="p-4 max-w-4xl mx-auto">
+    <div className="p-4 max-w-4xl mx-auto overflow-hidden">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">Prepare for Battle</h1>
         <p className="text-gray-600">Select your tasks and set your battle duration</p>
@@ -173,7 +173,7 @@ const BattlePreparation: React.FC = () => {
       </div>
       
       <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-safe">
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
@@ -189,8 +189,8 @@ const BattlePreparation: React.FC = () => {
                   {...provided.droppableProps}
                   className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
                     snapshot.isDraggingOver 
-                      ? 'bg-red-50 border-red-300' 
-                      : 'bg-white border-gray-200'
+                      ? 'bg-red-50 border-red-300 touch-pan-y' 
+                      : 'bg-white border-gray-200 touch-pan-y'
                   }`}
                 >
                   {selectedTasks.length === 0 ? (
@@ -226,8 +226,8 @@ const BattlePreparation: React.FC = () => {
                   {...provided.droppableProps}
                   className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
                     snapshot.isDraggingOver 
-                      ? 'bg-red-50 border-red-300' 
-                      : 'bg-white border-gray-200'
+                      ? 'bg-red-50 border-red-300 touch-pan-y' 
+                      : 'bg-white border-gray-200 touch-pan-y'
                   }`}
                 >
                   {availableTasks.length === 0 ? (
