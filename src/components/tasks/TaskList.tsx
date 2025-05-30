@@ -9,6 +9,7 @@ interface TaskListProps {
   onDragEnd?: (result: DropResult) => void;
   emptyMessage?: string;
   isDraggable?: boolean;
+  onTaskClick?: (taskId: string) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -17,6 +18,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onDragEnd,
   emptyMessage = 'No tasks available',
   isDraggable = true,
+  onTaskClick,
 }) => {
   // If tasks is empty, display empty message
   if (tasks.length === 0) {
@@ -30,14 +32,22 @@ const TaskList: React.FC<TaskListProps> = ({
   if (!isDraggable) {
     return (
       <div className="space-y-2">
-        {tasks.map((task, index) => (
-          <TaskItem 
-            key={task.id} 
-            task={task} 
-            index={index}
-            isDraggable={false}
-          />
-        ))}
+        {tasks.map((task, index) => {
+          const itemProps = onTaskClick ? {
+            onClick: () => onTaskClick(task.id),
+            className: 'cursor-pointer hover:scale-[1.02] transition-transform'
+          } : {};
+          
+          return (
+            <div key={task.id} {...itemProps}>
+              <TaskItem 
+                task={task} 
+                index={index}
+                isDraggable={false}
+              />
+            </div>
+          );
+        })}
       </div>
     );
   }

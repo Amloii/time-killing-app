@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Swords, Clock, Plus, Minus, MoveHorizontal, Timer } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Swords, Clock, Plus, Minus, Timer, ListPlus } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
 import SamuraiMascot from '../common/SamuraiMascot';
+import TaskSelectionPage from './TaskSelectionPage';
 
 const BattlePreparation: React.FC = () => {
   const { tasks, settings, createSession, startBattle } = useAppStore();
   
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
-  const [isDragging, setIsDragging] = useState(false);
+  const [showTaskSelection, setShowTaskSelection] = useState(false);
   
-  // Get available tasks (those that aren't completed)
-  const availableTasks = tasks.filter(task => !task.completed);
   const selectedTasks = selectedTaskIds
     .map(id => tasks.find(task => task.id === id))
     .filter((task): task is NonNullable<typeof task> => task !== undefined);
@@ -29,47 +28,9 @@ const BattlePreparation: React.FC = () => {
     setDuration(newDuration);
   };
   
-  // Handle drag start
-  const handleDragStart = () => {
-    setIsDragging(true);
-  };
-  
-  // Handle drag end
-  const handleDragEnd = (result: DropResult) => {
-    setIsDragging(false);
-
-    if (!result.destination) {
-      return;
-    }
-
-    const { source, destination } = result;
-
-    // Moving within the same list
-    if (source.droppableId === destination.droppableId) {
-      if (source.droppableId === 'selected-tasks') {
-        const newTaskIds = Array.from(selectedTaskIds);
-        const [movedId] = newTaskIds.splice(source.index, 1);
-        newTaskIds.splice(destination.index, 0, movedId);
-        setSelectedTaskIds(newTaskIds);
-      }
-      return;
-    }
-
-    const taskId = result.draggableId;
-    
-    // Moving to selected tasks
-    if (destination.droppableId === 'selected-tasks') {
-      if (!selectedTaskIds.includes(taskId)) {
-        const newSelectedIds = [...selectedTaskIds];
-        newSelectedIds.splice(destination.index, 0, taskId);
-        setSelectedTaskIds(newSelectedIds);
-      }
-    }
-
-    // Moving to available tasks
-    if (destination.droppableId === 'available-tasks') {
-      setSelectedTaskIds(selectedTaskIds.filter(id => id !== taskId));
-    }
+  const handleTaskSelect = (taskId: string) => {
+    setSelectedTaskIds(prev => [...prev, taskId]);
+    setShowTaskSelection(false);
   };
   
   // Start the battle
@@ -78,6 +39,16 @@ const BattlePreparation: React.FC = () => {
     createSession(duration, selectedTaskIds);
     startBattle();
   };
+  
+  if (showTaskSelection) {
+    return (
+      <TaskSelectionPage
+        selectedTaskIds={selectedTaskIds}
+        onTaskSelect={handleTaskSelect}
+        onBack={() => setShowTaskSelection(false)}
+      />
+    );
+  }
   
   // Render task item
   const renderTask = (task: NonNullable<typeof tasks[0]>, provided: any, snapshot: any) => (
@@ -122,7 +93,7 @@ const BattlePreparation: React.FC = () => {
       </div>
       
       <div className="mb-8 flex justify-center">
-        <SamuraiMascot mood={isDragging ? "focused" : "ready"} size={120} />
+        <SamuraiMascot mood="ready" size={120} />
       </div>
       
       <div className="mb-8 bg-white rounded-lg shadow-md border border-gray-200">
@@ -172,86 +143,44 @@ const BattlePreparation: React.FC = () => {
         </div>
       </div>
       
-      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-safe">
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
-              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
-                {selectedTasks.length}
-              </span>
-            </div>
-            
-            <Droppable droppableId="selected-tasks">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
-                    snapshot.isDraggingOver 
-                      ? 'bg-red-50 border-red-300 touch-pan-y' 
-                      : 'bg-white border-gray-200 touch-pan-y'
-                  }`}
-                >
-                  {selectedTasks.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-gray-500">
-                      <MoveHorizontal className="w-8 h-8 mb-2" />
-                      <p>Drag tasks here to add them to your battle</p>
-                    </div>
-                  ) : (
-                    selectedTasks.map((task, index) => (
-                      <Draggable key={task.id} draggableId={task.id} index={index}>
-                        {(provided, snapshot) => renderTask(task, provided, snapshot)}
-                      </Draggable>
-                    ))
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div>
-          
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Available Tasks</h2>
-              <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium">
-                {availableTasks.length}
-              </span>
-            </div>
-            
-            <Droppable droppableId="available-tasks">
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
-                    snapshot.isDraggingOver 
-                      ? 'bg-red-50 border-red-300 touch-pan-y' 
-                      : 'bg-white border-gray-200 touch-pan-y'
-                  }`}
-                >
-                  {availableTasks.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-gray-500">
-                      <p>No tasks available. Create some tasks to begin.</p>
-                    </div>
-                  ) : (
-                    availableTasks.map((task, index) => (
-                      !selectedTaskIds.includes(task.id) && (
-                        <Draggable key={task.id} draggableId={task.id} index={index}>
-                          {(provided, snapshot) => renderTask(task, provided, snapshot)}
-                        </Draggable>
-                      )
-                    ))
-                  )}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </div>
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
+          <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
+            {selectedTasks.length}
+          </span>
         </div>
-      </DragDropContext>
+        
+        <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
+          {selectedTasks.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">No tasks selected for this battle</p>
+              <Button
+                onClick={() => setShowTaskSelection(true)}
+                icon={<ListPlus className="w-5 h-5" />}
+              >
+                Select Tasks
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-2 mb-4">
+                {selectedTasks.map(task => renderTask(task))}
+              </div>
+              <Button
+                onClick={() => setShowTaskSelection(true)}
+                variant="secondary"
+                fullWidth
+                icon={<Plus className="w-5 h-5" />}
+              >
+                Add More Tasks
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
       
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center mb-safe">
         <Button 
           onClick={handleStartBattle}
           size="lg"
