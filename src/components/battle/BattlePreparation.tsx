@@ -12,11 +12,8 @@ const BattlePreparation: React.FC = () => {
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Get available tasks (those that aren't completed and not selected)
-  const availableTasks = tasks.filter(task => 
-    !task.completed && !selectedTaskIds.includes(task.id)
-  );
-  
+  // Get available tasks (those that aren't completed)
+  const availableTasks = tasks.filter(task => !task.completed);
   const selectedTasks = selectedTaskIds
     .map(id => tasks.find(task => task.id === id))
     .filter((task): task is NonNullable<typeof task> => task !== undefined);
@@ -32,40 +29,47 @@ const BattlePreparation: React.FC = () => {
     setDuration(newDuration);
   };
   
-  // Handle drag and drop
-  const handleDragEnd = (result: DropResult) => {
-    setIsDragging(false);
-    const { source, destination, draggableId } = result;
-    
-    // Dropped outside the list
-    if (!destination) return;
-    
-    // Moving within selected tasks
-    if (source.droppableId === 'selected-tasks' && 
-        destination.droppableId === 'selected-tasks') {
-      const newOrder = Array.from(selectedTaskIds);
-      newOrder.splice(source.index, 1);
-      newOrder.splice(destination.index, 0, draggableId);
-      setSelectedTaskIds(newOrder);
-      return;
-    }
-    
-    // Moving from available to selected
-    if (source.droppableId === 'available-tasks' && 
-        destination.droppableId === 'selected-tasks') {
-      setSelectedTaskIds(prev => [...prev, draggableId]);
-      return;
-    }
-    
-    // Moving from selected to available
-    if (source.droppableId === 'selected-tasks' && 
-        destination.droppableId === 'available-tasks') {
-      setSelectedTaskIds(prev => prev.filter(id => id !== draggableId));
-    }
-  };
-  
+  // Handle drag start
   const handleDragStart = () => {
     setIsDragging(true);
+  };
+  
+  // Handle drag end
+  const handleDragEnd = (result: DropResult) => {
+    setIsDragging(false);
+    
+    if (!result.destination) {
+      return;
+    }
+    
+    const { source, destination } = result;
+    
+    // Moving within the same list
+    if (source.droppableId === destination.droppableId) {
+      if (source.droppableId === 'selected-tasks') {
+        const newTaskIds = Array.from(selectedTaskIds);
+        const [movedId] = newTaskIds.splice(source.index, 1);
+        newTaskIds.splice(destination.index, 0, movedId);
+        setSelectedTaskIds(newTaskIds);
+      }
+      return;
+    }
+    
+    const taskId = result.draggableId;
+    
+    // Moving to selected tasks
+    if (destination.droppableId === 'selected-tasks') {
+      if (!selectedTaskIds.includes(taskId)) {
+        const newSelectedIds = [...selectedTaskIds];
+        newSelectedIds.splice(destination.index, 0, taskId);
+        setSelectedTaskIds(newSelectedIds);
+      }
+    }
+    
+    // Moving to available tasks
+    if (destination.droppableId === 'available-tasks') {
+      setSelectedTaskIds(selectedTaskIds.filter(id => id !== taskId));
+    }
   };
   
   // Start the battle
@@ -74,6 +78,41 @@ const BattlePreparation: React.FC = () => {
     createSession(duration, selectedTaskIds);
     startBattle();
   };
+  
+  // Render task item
+  const renderTask = (task: NonNullable<typeof tasks[0]>, provided: any, snapshot: any) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      className={`mb-2 transition-all duration-200 ${
+        snapshot.isDragging ? 'scale-105 rotate-1 shadow-lg' : ''
+      }`}
+    >
+      <div className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md">
+        <h3 className="font-medium text-gray-900">{task.title}</h3>
+        {task.description && (
+          <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+        )}
+        <div className="flex items-center mt-2 space-x-4">
+          {task.estimatedTime && (
+            <div className="flex items-center text-sm text-gray-500">
+              <Clock className="w-4 h-4 mr-1" />
+              <span>{task.estimatedTime} min</span>
+            </div>
+          )}
+          <div className="flex items-center">
+            <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
+            <div className="flex">
+              {Array.from({ length: task.difficulty }).map((_, i) => (
+                <span key={i} className="text-yellow-500">★</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -87,7 +126,7 @@ const BattlePreparation: React.FC = () => {
       </div>
       
       <div className="mb-8 bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6">
           <h2 className="text-xl font-bold mb-4 flex items-center">
             <Timer className="w-5 h-5 mr-2" />
             Battle Configuration
@@ -133,9 +172,9 @@ const BattlePreparation: React.FC = () => {
         </div>
       </div>
       
-      <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className={`transition-all duration-300 ${isDragging ? 'ring-2 ring-red-500 ring-opacity-50' : ''}`}>
+          <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
               <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
@@ -148,8 +187,10 @@ const BattlePreparation: React.FC = () => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`bg-white p-4 rounded-lg border-2 min-h-[400px] transition-colors ${
-                    snapshot.isDraggingOver ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                  className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
+                    snapshot.isDraggingOver 
+                      ? 'bg-red-50 border-red-300' 
+                      : 'bg-white border-gray-200'
                   }`}
                 >
                   {selectedTasks.length === 0 ? (
@@ -160,25 +201,7 @@ const BattlePreparation: React.FC = () => {
                   ) : (
                     selectedTasks.map((task, index) => (
                       <Draggable key={task.id} draggableId={task.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`mb-2 transition-transform ${
-                              snapshot.isDragging ? 'rotate-1 scale-105' : ''
-                            }`}
-                          >
-                            <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                              <h3 className="font-medium">{task.title}</h3>
-                              {task.estimatedTime && (
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {task.estimatedTime} min
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
+                        {(provided, snapshot) => renderTask(task, provided, snapshot)}
                       </Draggable>
                     ))
                   )}
@@ -201,8 +224,10 @@ const BattlePreparation: React.FC = () => {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`bg-white p-4 rounded-lg border-2 min-h-[400px] transition-colors ${
-                    snapshot.isDraggingOver ? 'border-red-400 bg-red-50' : 'border-gray-200'
+                  className={`min-h-[400px] p-4 rounded-lg border-2 transition-colors ${
+                    snapshot.isDraggingOver 
+                      ? 'bg-red-50 border-red-300' 
+                      : 'bg-white border-gray-200'
                   }`}
                 >
                   {availableTasks.length === 0 ? (
@@ -210,29 +235,13 @@ const BattlePreparation: React.FC = () => {
                       <p>No tasks available. Create some tasks to begin.</p>
                     </div>
                   ) : (
-                    availableTasks.map((task, index) => (
-                      <Draggable key={task.id} draggableId={task.id} index={index}>
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`mb-2 transition-transform ${
-                              snapshot.isDragging ? 'rotate-1 scale-105' : ''
-                            }`}
-                          >
-                            <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-                              <h3 className="font-medium">{task.title}</h3>
-                              {task.estimatedTime && (
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {task.estimatedTime} min
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))
+                    availableTasks
+                      .filter(task => !selectedTaskIds.includes(task.id))
+                      .map((task, index) => (
+                        <Draggable key={task.id} draggableId={task.id} index={index}>
+                          {(provided, snapshot) => renderTask(task, provided, snapshot)}
+                        </Draggable>
+                      ))
                   )}
                   {provided.placeholder}
                 </div>
