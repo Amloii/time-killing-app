@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Swords, Clock, Plus, Minus, MoveHorizontal, Timer } from 'lucide-react';
 import Button from '../common/Button';
-import TaskList from '../components/tasks/TaskList';
+import TaskList from '../tasks/TaskList';
 import { useAppStore } from '../../store';
 import SamuraiMascot from '../common/SamuraiMascot';
 
@@ -35,8 +35,10 @@ const BattlePreparation: React.FC = () => {
     setIsDragging(false);
     const { source, destination } = result;
     
+    // Dropped outside the list
     if (!destination) return;
     
+    // Moving within selected tasks
     if (source.droppableId === 'selected-tasks' && 
         destination.droppableId === 'selected-tasks') {
       const newSelectedTasks = Array.from(selectedTaskIds);
@@ -46,21 +48,20 @@ const BattlePreparation: React.FC = () => {
       return;
     }
     
+    // Moving from available to selected
     if (source.droppableId === 'available-tasks' && 
         destination.droppableId === 'selected-tasks') {
       const taskId = availableTasks[source.index].id;
       if (!selectedTaskIds.includes(taskId)) {
-        setSelectedTaskIds([...selectedTaskIds, taskId]);
+        setSelectedTaskIds(prev => [...prev, taskId]);
       }
       return;
     }
     
+    // Moving from selected to available
     if (source.droppableId === 'selected-tasks' && 
         destination.droppableId === 'available-tasks') {
-      const newSelectedTasks = Array.from(selectedTaskIds);
-      newSelectedTasks.splice(source.index, 1);
-      setSelectedTaskIds(newSelectedTasks);
-      return;
+      setSelectedTaskIds(prev => prev.filter((_, index) => index !== source.index));
     }
   };
   
