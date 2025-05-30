@@ -37,13 +37,13 @@ const BattlePreparation: React.FC = () => {
   // Handle drag end
   const handleDragEnd = (result: DropResult) => {
     setIsDragging(false);
-    
+
     if (!result.destination) {
       return;
     }
-    
+
     const { source, destination } = result;
-    
+
     // Moving within the same list
     if (source.droppableId === destination.droppableId) {
       if (source.droppableId === 'selected-tasks') {
@@ -54,7 +54,7 @@ const BattlePreparation: React.FC = () => {
       }
       return;
     }
-    
+
     const taskId = result.draggableId;
     
     // Moving to selected tasks
@@ -65,7 +65,7 @@ const BattlePreparation: React.FC = () => {
         setSelectedTaskIds(newSelectedIds);
       }
     }
-    
+
     // Moving to available tasks
     if (destination.droppableId === 'available-tasks') {
       setSelectedTaskIds(selectedTaskIds.filter(id => id !== taskId));
@@ -235,13 +235,13 @@ const BattlePreparation: React.FC = () => {
                       <p>No tasks available. Create some tasks to begin.</p>
                     </div>
                   ) : (
-                    availableTasks
-                      .filter(task => !selectedTaskIds.includes(task.id))
-                      .map((task, index) => (
+                    availableTasks.map((task, index) => (
+                      !selectedTaskIds.includes(task.id) && (
                         <Draggable key={task.id} draggableId={task.id} index={index}>
                           {(provided, snapshot) => renderTask(task, provided, snapshot)}
                         </Draggable>
-                      ))
+                      )
+                    ))
                   )}
                   {provided.placeholder}
                 </div>
