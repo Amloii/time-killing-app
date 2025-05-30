@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Swords, Clock, Plus, Minus, Timer, ListPlus } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
 import SamuraiMascot from '../common/SamuraiMascot';
 import TaskSelectionPage from './TaskSelectionPage';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 const BattlePreparation: React.FC = () => {
   const { tasks, settings, createSession, startBattle } = useAppStore();
@@ -32,6 +32,16 @@ const BattlePreparation: React.FC = () => {
     setSelectedTaskIds(prev => [...prev, taskId]);
     setShowTaskSelection(false);
   };
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(selectedTaskIds);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setSelectedTaskIds(items);
+  };
   
   // Start the battle
   const handleStartBattle = () => {
@@ -49,41 +59,6 @@ const BattlePreparation: React.FC = () => {
       />
     );
   }
-  
-  // Render task item
-  const renderTask = (task: NonNullable<typeof tasks[0]>, provided: any, snapshot: any) => (
-    <div
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      className={`mb-2 transition-all duration-200 ${
-        snapshot.isDragging ? 'scale-105 rotate-1 shadow-lg' : ''
-      }`}
-    >
-      <div className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md">
-        <h3 className="font-medium text-gray-900">{task.title}</h3>
-        {task.description && (
-          <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-        )}
-        <div className="flex items-center mt-2 space-x-4">
-          {task.estimatedTime && (
-            <div className="flex items-center text-sm text-gray-500">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{task.estimatedTime} min</span>
-            </div>
-          )}
-          <div className="flex items-center">
-            <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
-            <div className="flex">
-              {Array.from({ length: task.difficulty }).map((_, i) => (
-                <span key={i} className="text-yellow-500">★</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
   
   return (
     <div className="p-4 max-w-4xl mx-auto overflow-hidden">
@@ -163,20 +138,65 @@ const BattlePreparation: React.FC = () => {
               </Button>
             </div>
           ) : (
-            <>
-              <div className="space-y-2 mb-4">
-                {selectedTasks.map(task => renderTask(task))}
-              </div>
-              <Button
-                onClick={() => setShowTaskSelection(true)}
-                variant="secondary"
-                fullWidth
-                icon={<Plus className="w-5 h-5" />}
-              >
-                Add More Tasks
-              </Button>
-            </>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="selected-tasks">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-2 mb-4"
+                  >
+                    {selectedTasks.map((task, index) => (
+                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className={`transition-all duration-200 ${
+                              snapshot.isDragging ? 'scale-105 rotate-1 shadow-lg' : ''
+                            }`}
+                          >
+                            <div className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md">
+                              <h3 className="font-medium text-gray-900">{task.title}</h3>
+                              {task.description && (
+                                <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                              )}
+                              <div className="flex items-center mt-2 space-x-4">
+                                {task.estimatedTime && (
+                                  <div className="flex items-center text-sm text-gray-500">
+                                    <Clock className="w-4 h-4 mr-1" />
+                                    <span>{task.estimatedTime} min</span>
+                                  </div>
+                                )}
+                                <div className="flex items-center">
+                                  <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
+                                  <div className="flex">
+                                    {Array.from({ length: task.difficulty }).map((_, i) => (
+                                      <span key={i} className="text-yellow-500">★</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           )}
+          <Button
+            onClick={() => setShowTaskSelection(true)}
+            variant="secondary"
+            fullWidth
+            icon={<Plus className="w-5 h-5" />}
+          >
+            Add More Tasks
+          </Button>
         </div>
       </div>
       
