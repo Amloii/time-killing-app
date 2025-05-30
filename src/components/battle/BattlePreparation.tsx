@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Swords, Clock, Plus, Minus, MoveHorizontal, Timer } from 'lucide-react';
 import Button from '../common/Button';
-import TaskList from '../tasks/TaskList';
 import { useAppStore } from '../../store';
 import SamuraiMascot from '../common/SamuraiMascot';
 
@@ -13,11 +12,14 @@ const BattlePreparation: React.FC = () => {
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Get available tasks (those that aren't completed)
-  const availableTasks = tasks.filter(task => !task.completed);
-  const selectedTasks = selectedTaskIds.map(id => 
-    tasks.find(task => task.id === id)
-  ).filter(task => task !== undefined) as typeof tasks;
+  // Get available tasks (those that aren't completed and not selected)
+  const availableTasks = tasks.filter(task => 
+    !task.completed && !selectedTaskIds.includes(task.id)
+  );
+  
+  const selectedTasks = selectedTaskIds
+    .map(id => tasks.find(task => task.id === id))
+    .filter((task): task is NonNullable<typeof task> => task !== undefined);
   
   // Calculate estimated total time
   const totalEstimatedTime = selectedTasks.reduce((total, task) => 
@@ -33,7 +35,7 @@ const BattlePreparation: React.FC = () => {
   // Handle drag and drop
   const handleDragEnd = (result: DropResult) => {
     setIsDragging(false);
-    const { source, destination } = result;
+    const { source, destination, draggableId } = result;
     
     // Dropped outside the list
     if (!destination) return;
@@ -41,27 +43,24 @@ const BattlePreparation: React.FC = () => {
     // Moving within selected tasks
     if (source.droppableId === 'selected-tasks' && 
         destination.droppableId === 'selected-tasks') {
-      const newSelectedTasks = Array.from(selectedTaskIds);
-      const [movedTask] = newSelectedTasks.splice(source.index, 1);
-      newSelectedTasks.splice(destination.index, 0, movedTask);
-      setSelectedTaskIds(newSelectedTasks);
+      const newOrder = Array.from(selectedTaskIds);
+      newOrder.splice(source.index, 1);
+      newOrder.splice(destination.index, 0, draggableId);
+      setSelectedTaskIds(newOrder);
       return;
     }
     
     // Moving from available to selected
     if (source.droppableId === 'available-tasks' && 
         destination.droppableId === 'selected-tasks') {
-      const taskId = availableTasks[source.index].id;
-      if (!selectedTaskIds.includes(taskId)) {
-        setSelectedTaskIds(prev => [...prev, taskId]);
-      }
+      setSelectedTaskIds(prev => [...prev, draggableId]);
       return;
     }
     
     // Moving from selected to available
     if (source.droppableId === 'selected-tasks' && 
         destination.droppableId === 'available-tasks') {
-      setSelectedTaskIds(prev => prev.filter((_, index) => index !== source.index));
+      setSelectedTaskIds(prev => prev.filter(id => id !== draggableId));
     }
   };
   
@@ -153,7 +152,7 @@ const BattlePreparation: React.FC = () => {
                     snapshot.isDraggingOver ? 'border-red-400 bg-red-50' : 'border-gray-200'
                   }`}
                 >
-                  {selectedTaskIds.length === 0 ? (
+                  {selectedTasks.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-gray-500">
                       <MoveHorizontal className="w-8 h-8 mb-2" />
                       <p>Drag tasks here to add them to your battle</p>
@@ -167,7 +166,7 @@ const BattlePreparation: React.FC = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`mb-2 transition-transform ${
-                              snapshot.isDragging ? 'rotate-1' : ''
+                              snapshot.isDragging ? 'rotate-1 scale-105' : ''
                             }`}
                           >
                             <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
@@ -219,7 +218,7 @@ const BattlePreparation: React.FC = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`mb-2 transition-transform ${
-                              snapshot.isDragging ? 'rotate-1' : ''
+                              snapshot.isDragging ? 'rotate-1 scale-105' : ''
                             }`}
                           >
                             <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
