@@ -133,12 +133,13 @@ const BattlePreparation: React.FC = () => {
         <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
           {selectedTasks.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No tasks selected for this battle</p>
+              <p className="text-gray-500">No tasks selected for this battle</p>
               <Button
                 onClick={() => setShowTaskSelection(true)}
-                icon={<ListPlus className="w-5 h-5" />}
+                icon={<Plus className="w-5 h-5" />}
+                className="mt-4"
               >
-                Select Tasks
+                Add Tasks
               </Button>
             </div>
           ) : (
@@ -207,16 +208,17 @@ const BattlePreparation: React.FC = () => {
                   </div>
                 )}
               </Droppable>
+              <Button
+                onClick={() => setShowTaskSelection(true)}
+                variant="secondary"
+                fullWidth
+                icon={<Plus className="w-5 h-5" />}
+                className="mt-4"
+              >
+                Add More Tasks
+              </Button>
             </DragDropContext>
           )}
-          <Button
-            onClick={() => setShowTaskSelection(true)}
-            variant="secondary"
-            fullWidth
-            icon={<Plus className="w-5 h-5" />}
-          >
-            Add More Tasks
-          </Button>
         </div>
       </div>
       
