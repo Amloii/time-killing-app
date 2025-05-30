@@ -269,5 +269,3 @@ const BattlePreparation: React.FC = () => {
 };
 
 export default BattlePreparation;
-
-export default BattlePreparation
