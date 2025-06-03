@@ -23,7 +23,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
   );
 
   const taskContent = (
-    <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+    <div className="p-2 sm:p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="font-medium text-gray-900">{task.title}</h3>
@@ -31,7 +31,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
             <p className="text-sm text-gray-600 mt-1">{task.description}</p>
           )}
           
-          <div className="flex items-center mt-2 space-x-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
             {task.estimatedTime && (
               <div className="flex items-center text-sm text-gray-500">
                 <Clock className="w-4 h-4 mr-1" />
@@ -43,11 +43,11 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
               {renderDifficulty()}
             </div>
             {task.tags && task.tags.length > 0 && (
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {task.tags.map(tag => (
                   <span
                     key={tag}
-                    className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs"
+                    className="bg-gray-100 text-gray-600 px-1.5 sm:px-2 py-0.5 rounded-full text-xs"
                   >
                     {tag}
                   </span>

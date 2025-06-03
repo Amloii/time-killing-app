@@ -71,8 +71,8 @@ const CreateTaskForm: React.FC = () => {
   };
   
   return (
-    <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="bg-white p-4 rounded-lg border border-gray-200">
-      <h3 className="text-lg font-medium mb-4">Create New Task</h3>
+    <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
+      <h3 className="text-base sm:text-lg font-medium mb-4">Create New Task</h3>
       
       <div className="space-y-4">
         <div>
@@ -145,11 +145,11 @@ const CreateTaskForm: React.FC = () => {
         <div>
           <label className="block text-sm font-medium text-gray-700">
             <div className="flex items-center">
-              <Star className="w-4 h-4 mr-1" />
+              <Star className="w-4 h-4 mr-1 hidden sm:block" />
               <span>Difficulty Level</span>
             </div>
           </label>
-          <div className="flex space-x-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2">
             {[1, 2, 3, 4, 5].map((level) => (
               <motion.button
                 key={level}
@@ -170,10 +170,10 @@ const CreateTaskForm: React.FC = () => {
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
             Tags
           </label>
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
             {tags.map((tag) => (
               <span
                 key={tag}

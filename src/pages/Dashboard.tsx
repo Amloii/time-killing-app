@@ -21,9 +21,9 @@ const Dashboard: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Fight Mode</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">Fight Mode</h1>
         
         <button
           onClick={() => setShowSettings(true)}
@@ -64,16 +64,16 @@ const Dashboard: React.FC = () => {
         {activeTab === 'battle' ? (
           <BattlePreparation />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Tasks</h2>
+                <h2 className="text-lg sm:text-xl font-bold">Tasks</h2>
                 <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
                   {uncompletedTasks.length}
                 </span>
               </div>
               
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 min-h-[300px]">
+              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 min-h-[300px] overflow-y-auto">
                 <TaskList
                   tasks={uncompletedTasks}
                   droppableId="dashboard-tasks"
@@ -84,19 +84,19 @@ const Dashboard: React.FC = () => {
             </div>
             
             <div>
-              <h2 className="text-xl font-bold mb-4">Create Task</h2>
+              <h2 className="text-lg sm:text-xl font-bold mb-4">Create Task</h2>
               <CreateTaskForm />
               
               {completedTasks.length > 0 && (
                 <div className="mt-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold">Completed</h2>
+                    <h2 className="text-lg sm:text-xl font-bold">Completed</h2>
                     <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-sm">
                       {completedTasks.length}
                     </span>
                   </div>
                   
-                  <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 max-h-[300px] overflow-y-auto">
+                  <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 max-h-[300px] overflow-y-auto">
                     <TaskList
                       tasks={completedTasks}
                       droppableId="completed-tasks"
