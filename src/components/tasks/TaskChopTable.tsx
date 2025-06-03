@@ -51,6 +51,7 @@ const TaskChopTable: React.FC = () => {
       ...subTasks,
       {
         description: '',
+        summary: '',
         estimatedTime: 30,
         difficulty: 3,
         type: 'Development',
@@ -158,7 +159,19 @@ const TaskChopTable: React.FC = () => {
                       className="bg-gray-50 p-4 rounded-lg mb-2 border border-gray-200"
                     >
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="md:col-span-2 min-h-[4rem] flex flex-col">
+                        <div className="md:col-span-2 min-h-[4rem] flex flex-col gap-2">
+                          <input
+                            type="text"
+                            value={subtask.summary}
+                            onChange={(e) =>
+                              handleUpdateSubTask(index, {
+                                summary: e.target.value.slice(0, 50),
+                              })
+                            }
+                            className="w-full rounded-md border-gray-300 shadow-sm h-10 px-3"
+                            placeholder="Short summary (max 50 chars)"
+                            maxLength={50}
+                          />
                           <textarea
                             value={subtask.description}
                             onChange={(e) =>
@@ -166,7 +179,7 @@ const TaskChopTable: React.FC = () => {
                                 description: e.target.value,
                               })
                             }
-                            className="w-full rounded-md border-gray-300 shadow-sm resize-none h-24 py-2 px-3"
+                            className="w-full rounded-md border-gray-300 shadow-sm resize-none h-20 py-2 px-3"
                             placeholder="Subtask description"
                             rows={2}
                           />

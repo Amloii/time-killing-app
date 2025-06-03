@@ -34,6 +34,7 @@ export type TaskType = 'Research' | 'Development' | 'Design' | 'Testing' | 'Docu
 export interface SubTask {
   id: string;
   description: string;
+  summary: string;
   estimatedTime: number;
   difficulty: 1 | 2 | 3 | 4 | 5;
   type: TaskType;

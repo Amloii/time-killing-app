@@ -4,6 +4,7 @@ import { SubTask, TaskType } from '../types';
 const SYSTEM_PROMPT = `You are a task analysis assistant. Break down tasks into smaller, actionable subtasks.
 For each subtask, provide:
 - A clear, concise description
+ - A short summary (max 50 characters)
 - Estimated time (in minutes: from 5 to 480)
 - Difficulty level (1-5)
 - Task type (Research, Development, Design, Testing, or Documentation)
@@ -96,6 +97,7 @@ export async function analyzeTask(task: string, apiKey: string): Promise<Omit<Su
     // Validate and format subtasks
     return subtasks.map((subtask: any) => ({
       description: subtask.description,
+      summary: subtask.summary || subtask.description.slice(0, 50),
       estimatedTime: validateTime(subtask.estimatedTime),
       difficulty: validateDifficulty(subtask.difficulty),
       type: validateTaskType(subtask.type),
