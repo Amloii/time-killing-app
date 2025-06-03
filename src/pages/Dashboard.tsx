@@ -22,22 +22,22 @@ const Dashboard: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-sakura p-2 sm:p-4">
+    <div className="min-h-screen p-2 sm:p-4">
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-3xl sm:text-4xl font-bold japanese-brush text-red-600 tracking-wide">
+        <h1 className="text-3xl sm:text-4xl font-bold japanese-brush text-red-600 tracking-wide bg-white bg-opacity-90 px-4 py-2 rounded-lg shadow-sm">
           Fight Mode
         </h1>
         
         <button
           onClick={() => setShowSettings(true)}
-          className="p-2 rounded-full hover:bg-red-50 text-red-600 transition-colors"
+          className="p-2 rounded-full hover:bg-white hover:bg-opacity-90 text-red-600 transition-colors"
         >
           <SettingsIcon className="w-6 h-6" />
         </button>
       </header>
       
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 border-b-2 border-red-200">
+        <div className="mb-6 content-overlay rounded-lg">
           <nav className="flex space-x-4">
             <button
               onClick={() => setActiveTab('battle')}
@@ -85,12 +85,12 @@ const Dashboard: React.FC = () => {
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg sm:text-xl font-bold">Tasks</h2>
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
+                <span className="bg-white bg-opacity-75 text-gray-700 px-2 py-1 rounded-full text-sm shadow-sm">
                   {uncompletedTasks.length}
                 </span>
               </div>
               
-              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 min-h-[300px] overflow-y-auto">
+              <div className="content-overlay p-3 sm:p-4 rounded-lg shadow-sm min-h-[300px] overflow-y-auto">
                 <TaskList
                   tasks={uncompletedTasks}
                   droppableId="dashboard-tasks"
