@@ -18,6 +18,10 @@ const BattlePreparation: React.FC = () => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
   };
   
+  const handleRemoveSubtask = (subtaskId: string) => {
+    setSelectedSubtaskIds(prev => prev.filter(id => id !== subtaskId));
+  };
+  
   const selectedTasks = selectedTaskIds
     .map(id => tasks.find(task => task.id === id))
     .filter((task): task is NonNullable<typeof task> => task !== undefined);
@@ -153,12 +157,12 @@ const BattlePreparation: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
           <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
-            {selectedTasks.length}
+            {selectedTasks.length + selectedSubtasks.length}
           </span>
         </div>
         
         <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
-          {selectedTasks.length === 0 ? (
+          {selectedTasks.length === 0 && selectedSubtasks.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">No tasks selected for this battle</p>
               <Button
@@ -235,6 +239,60 @@ const BattlePreparation: React.FC = () => {
                   </div>
                 )}
               </Droppable>
+              
+              {selectedSubtasks.length > 0 && (
+                <div className="mt-4 border-t border-gray-200 pt-4">
+                  <h3 className="text-lg font-medium mb-3">Selected Subtasks</h3>
+                  <div className="space-y-2">
+                    {selectedSubtasks.map((subtask) => {
+                      const parentTask = tasks.find(t => 
+                        t.subTasks?.some(st => st.id === subtask.id)
+                      );
+                      
+                      return (
+                        <div
+                          key={subtask.id}
+                          className="p-4 bg-gray-50 border border-gray-200 rounded-lg"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="text-sm text-gray-500 mb-1">
+                                From: {parentTask?.title}
+                              </div>
+                              <h4 className="font-medium text-gray-900">
+                                {subtask.summary}
+                              </h4>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {subtask.description}
+                              </p>
+                              <div className="flex items-center gap-4 mt-2 text-sm">
+                                <span className="text-gray-500">
+                                  {subtask.estimatedTime} min
+                                </span>
+                                <span className="text-gray-500">
+                                  {subtask.type}
+                                </span>
+                                <span className="text-yellow-500">
+                                  {'★'.repeat(subtask.difficulty)}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleRemoveSubtask(subtask.id)}
+                              className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              
               <Button
                 onClick={() => setShowTaskSelection(true)}
                 variant="secondary"
@@ -253,12 +311,12 @@ const BattlePreparation: React.FC = () => {
         <Button 
           onClick={handleStartBattle}
           size="lg"
-          disabled={selectedTaskIds.length === 0}
+          disabled={selectedTaskIds.length === 0 && selectedSubtasks.length === 0}
           icon={<Swords className="w-5 h-5" />}
         >
           Begin Battle
         </Button>
-        {selectedTaskIds.length === 0 && (
+        {selectedTaskIds.length === 0 && selectedSubtasks.length === 0 && (
           <p className="text-sm text-gray-500 mt-2">Select at least one task to begin</p>
         )}
       </div>
