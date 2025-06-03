@@ -60,15 +60,20 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   };
   
   const handleSubtaskSelect = (taskId: string, subtaskId: string) => {
-    // Handle subtask selection/deselection
-    onTaskSelect(taskId, [subtaskId]);
+    // Toggle only the clicked subtask
+    const isSelected = selectedSubtaskIds.includes(subtaskId);
+    const updatedSubtaskIds = isSelected
+      ? selectedSubtaskIds.filter(id => id !== subtaskId)
+      : [...selectedSubtaskIds, subtaskId];
+    
+    onTaskSelect('', updatedSubtaskIds);
   };
   
   const handleSelectAllSubtasks = (task: Task) => {
     if (!task.subTasks) return;
     
     const allSubtaskIds = task.subTasks.map(st => st.id);
-    const allSelected = task.subTasks.every(st => selectedSubtaskIds.includes(st.id));
+    const allSelected = allSubtaskIds.every(id => selectedSubtaskIds.includes(id));
     
     // If all are selected, deselect all, otherwise select all
     onTaskSelect(task.id, allSubtaskIds);
