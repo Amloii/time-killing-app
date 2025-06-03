@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, Clock, Star, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
 
