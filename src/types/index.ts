@@ -26,6 +26,7 @@ export interface AppSettings {
   theme: 'light' | 'dark';
   defaultTags: string[];
   keyboardShortcutsEnabled: boolean;
+  geminiApiKey?: string;
 }
 
 export type TaskType = 'Research' | 'Development' | 'Design' | 'Testing' | 'Documentation';

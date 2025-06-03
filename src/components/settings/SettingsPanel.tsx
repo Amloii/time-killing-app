@@ -25,6 +25,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     }
   };
   
+  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateSettings({ geminiApiKey: e.target.value });
+  };
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 max-w-md w-full">
       <div className="flex justify-between items-center mb-6">
@@ -75,6 +79,18 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           >
             {settings.showAnimations ? 'Enabled' : 'Disabled'}
           </Button>
+        </div>
+        
+        <div>
+          <h3 className="text-lg font-medium mb-2">Gemini API Key</h3>
+          <input
+            type="password"
+            value={settings.geminiApiKey}
+            onChange={handleApiKeyChange}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter your Gemini API key"
+          />
+          <p className="text-sm text-gray-500 mt-1">Required for AI task analysis</p>
         </div>
       </div>
       
