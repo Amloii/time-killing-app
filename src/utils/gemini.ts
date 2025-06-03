@@ -120,6 +120,10 @@ function validateDifficulty(difficulty: number): 1 | 2 | 3 | 4 | 5 {
 
 function validateTaskType(type: string): TaskType {
   const validTypes: TaskType[] = ['Research', 'Development', 'Design', 'Testing', 'Documentation'];
-  const normalized = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-  return validTypes.find(t => t === normalized) || 'Development';
+  if (typeof type !== 'string' || !type.trim()) {
+    return 'Development';
+  }
+  
+  const normalized = type.trim().charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+  return validTypes.includes(normalized as TaskType) ? (normalized as TaskType) : 'Development';
 }
