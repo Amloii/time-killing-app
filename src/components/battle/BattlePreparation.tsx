@@ -13,16 +13,6 @@ const BattlePreparation: React.FC = () => {
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    
-    const items = Array.from(selectedTaskIds);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    
-    setSelectedTaskIds(items);
-  };
-  
   const handleRemoveTask = (taskId: string) => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
   };
@@ -47,6 +37,16 @@ const BattlePreparation: React.FC = () => {
     setShowTaskSelection(false);
   };
 
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(selectedTaskIds);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setSelectedTaskIds(items);
+  };
+  
   // Start the battle
   const handleStartBattle = () => {
     if (selectedTaskIds.length === 0) return;
@@ -187,7 +187,11 @@ const BattlePreparation: React.FC = () => {
                                   </div>
                                 </div>
                                 <button
-                                  onClick={() => handleRemoveTask(task.id)}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleRemoveTask(task.id);
+                                  }}
                                   className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
                                 >
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,6 +208,15 @@ const BattlePreparation: React.FC = () => {
                   </div>
                 )}
               </Droppable>
+              <Button
+                onClick={() => setShowTaskSelection(true)}
+                variant="secondary"
+                fullWidth
+                icon={<Plus className="w-5 h-5" />}
+                className="mt-4"
+              >
+                Add More Tasks
+              </Button>
             </DragDropContext>
           )}
         </div>
