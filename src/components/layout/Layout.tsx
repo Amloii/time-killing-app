@@ -17,6 +17,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
 
+  const isPathActive = (path: string) => {
+    if (path === '/statistics') {
+      return location.pathname === path;
+    }
+    return location.pathname.includes(path.split('/').pop() || '');
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1 pb-16">{children}</main>
@@ -24,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="fixed bottom-0 left-0 right-0 bg-white bg-opacity-90 backdrop-blur-lg border-t border-gray-200 safe-area-inset">
         <div className="max-w-xl mx-auto px-4 h-16 flex items-center justify-between">
           {navItems.map(({ path, icon: Icon, label }) => {
-            const isActive = location.pathname.startsWith(path);
+            const isActive = isPathActive(path);
             
             return (
               <Link
