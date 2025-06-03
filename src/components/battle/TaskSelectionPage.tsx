@@ -52,7 +52,7 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   const handleSelectAllSubtasks = (task: Task) => {
     if (!task.subTasks) return;
     
-    const allSelected = task.subTasks.every(st => selectedSubtasksMap[st.id]);
+    const allSelected = task.subTasks.every(st => selectedSubtaskIds.includes(st.id));
     const subtaskIds = task.subTasks.map(st => st.id);
     
     if (allSelected) {
