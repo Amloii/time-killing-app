@@ -18,7 +18,7 @@ Consider:
 - Required skills and experience
 
 Format your response as JSON with:
-- estimatedTime (in minutes: 15, 30, 60, 120, 240, or 480)
+- estimatedTime (in minutes: from 5 to 480)
 - difficulty (1-5)
 - explanation (brief justification)`;
 
