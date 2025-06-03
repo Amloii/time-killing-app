@@ -63,17 +63,15 @@ const BattlePreparation: React.FC = () => {
   };
   
   const handleTaskSelect = (taskId: string, subtaskIds?: string[]) => {
-    if (subtaskIds) {
-      // Handle subtask selection/deselection
-      setSelectedSubtaskIds(prev => {
-        const isDeselecting = subtaskIds.every(id => prev.includes(id));
-        return isDeselecting
-          ? prev.filter(id => !subtaskIds.includes(id))
-          : [...prev, ...subtaskIds];
+    if (taskId && !subtaskIds) {
+      // Toggle selection for a full task
+      setSelectedTaskIds(prev => {
+        const isSelected = prev.includes(taskId);
+        return isSelected 
+          ? prev.filter(id => id !== taskId) 
+          : [...prev, taskId];
       });
-    } else {
-      // Handle full task selection
-      setSelectedTaskIds(prev => [...prev, taskId]);
+      
       // Clear any selected subtasks for this task
       const task = tasks.find(t => t.id === taskId);
       if (task?.subTasks) {
@@ -81,7 +79,22 @@ const BattlePreparation: React.FC = () => {
           prev.filter(id => !task.subTasks?.some(st => st.id === id))
         );
       }
+    } else if (subtaskIds && subtaskIds.length > 0) {
+      // Handle subtask selection/deselection
+      setSelectedSubtaskIds(prev => {
+        // Check if we're deselecting
+        const allSelected = subtaskIds.every(id => prev.includes(id));
+        
+        if (allSelected) {
+          // Deselect these subtasks
+          return prev.filter(id => !subtaskIds.includes(id));
+        } else {
+          // Add these subtasks
+          return [...prev, ...subtaskIds.filter(id => !prev.includes(id))];
+        }
+      });
     }
+    
     setShowTaskSelection(false);
   };
 
@@ -170,7 +183,7 @@ const BattlePreparation: React.FC = () => {
               <h3 className="text-sm font-medium text-gray-700 mb-2">Battle Stats</h3>
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Selected Tasks:</span>
+                  <span className="text-gray-600">Selected Items:</span>
                   <span className="font-bold">
                     {selectedItems.selectedTasks.length + selectedItems.selectedSubtasks.length}
                   </span>
@@ -271,63 +284,69 @@ const BattlePreparation: React.FC = () => {
                         )}
                       </Draggable>
                     ))}
-                    {selectedItems.selectedSubtasks.map((subtask) => {
-                      const parentTask = tasks.find(t => 
-                        t.subTasks?.some(st => st.id === subtask.id)
-                      );
-                      
-                      return (
-                        <div
-                          key={subtask.id}
-                          className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md ml-4"
-                        >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <div className="text-sm text-gray-500 mb-1">
-                                From: {parentTask?.title}
-                              </div>
-                              <h3 className="font-medium text-gray-900">
-                                {subtask.summary}
-                              </h3>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {subtask.description}
-                              </p>
-                              <div className="flex items-center mt-2 space-x-4">
-                                <div className="flex items-center text-sm text-gray-500">
-                                  <Clock className="w-4 h-4 mr-1" />
-                                  <span>{subtask.estimatedTime} min</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <span className="text-sm text-gray-500 mr-1">
-                                    Difficulty:
-                                  </span>
-                                  <div className="flex">
-                                    {Array.from({ length: subtask.difficulty }).map((_, i) => (
-                                      <span key={i} className="text-yellow-500">★</span>
-                                    ))}
-                                  </div>
-                                </div>
-                                <span className="text-sm text-gray-500">
-                                  {subtask.type}
-                                </span>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => handleRemoveSubtask(subtask.id)}
-                              className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
                     {provided.placeholder}
                   </div>
                 )}
               </Droppable>
+
+              {/* Selected Subtasks */}
+              {selectedItems.selectedSubtasks.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {selectedItems.selectedSubtasks.map((subtask) => {
+                    const parentTask = tasks.find(t => 
+                      t.subTasks?.some(st => st.id === subtask.id)
+                    );
+                    
+                    return (
+                      <div
+                        key={subtask.id}
+                        className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md ml-4"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="text-sm text-gray-500 mb-1">
+                              From: {parentTask?.title}
+                            </div>
+                            <h3 className="font-medium text-gray-900">
+                              {subtask.summary}
+                            </h3>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {subtask.description}
+                            </p>
+                            <div className="flex items-center mt-2 space-x-4">
+                              <div className="flex items-center text-sm text-gray-500">
+                                <Clock className="w-4 h-4 mr-1" />
+                                <span>{subtask.estimatedTime} min</span>
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-sm text-gray-500 mr-1">
+                                  Difficulty:
+                                </span>
+                                <div className="flex">
+                                  {Array.from({ length: subtask.difficulty }).map((_, i) => (
+                                    <span key={i} className="text-yellow-500">★</span>
+                                  ))}
+                                </div>
+                              </div>
+                              <span className="text-sm text-gray-500">
+                                {subtask.type}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleRemoveSubtask(subtask.id)}
+                            className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               <Button
                 onClick={() => setShowTaskSelection(true)}
                 variant="secondary"

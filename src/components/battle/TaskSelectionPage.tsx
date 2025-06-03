@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Plus, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { useAppStore } from '../../store';
-import TaskList from '../tasks/TaskList';
 import Button from '../common/Button'; 
 import { useNavigateToTab } from '../../hooks/useNavigateToTab';
 import { Task } from '../../types';
@@ -49,19 +48,30 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [onBack]);
   
+  const handleTaskSelect = (taskId: string) => {
+    // Handle full task selection
+    if (selectedTaskIds.includes(taskId)) {
+      // If already selected, remove it
+      onTaskSelect(taskId);
+    } else {
+      // Select it
+      onTaskSelect(taskId);
+    }
+  };
+  
+  const handleSubtaskSelect = (taskId: string, subtaskId: string) => {
+    // Handle subtask selection/deselection
+    onTaskSelect(taskId, [subtaskId]);
+  };
+  
   const handleSelectAllSubtasks = (task: Task) => {
     if (!task.subTasks) return;
     
+    const allSubtaskIds = task.subTasks.map(st => st.id);
     const allSelected = task.subTasks.every(st => selectedSubtaskIds.includes(st.id));
-    const subtaskIds = task.subTasks.map(st => st.id);
     
-    if (allSelected) {
-      // Deselect all subtasks
-      onTaskSelect(task.id, subtaskIds);
-    } else {
-      // Select all subtasks
-      onTaskSelect(task.id, subtaskIds);
-    }
+    // If all are selected, deselect all, otherwise select all
+    onTaskSelect(task.id, allSubtaskIds);
   };
   
   const toggleTaskExpansion = (taskId: string) => {
@@ -75,18 +85,30 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   const renderTask = (task: Task) => {
     const hasSubtasks = task.subTasks && task.subTasks.length > 0;
     const isExpanded = expandedTasks.includes(task.id);
+    const isTaskSelected = selectedTaskIds.includes(task.id);
     const allSubtasksSelected = hasSubtasks && 
       task.subTasks.every(st => selectedSubtaskIds.includes(st.id));
     
     return (
       <div key={task.id} className="mb-4">
-        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+        <div className={`bg-white p-4 rounded-lg border ${isTaskSelected ? 'border-red-300 bg-red-50' : 'border-gray-200'} hover:shadow-md transition-shadow`}>
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="font-medium text-gray-900">{task.title}</h3>
-              {task.description && (
-                <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-              )}
+            <div className="flex-1 flex items-start">
+              <div 
+                className={`w-6 h-6 mr-3 border rounded flex items-center justify-center cursor-pointer ${
+                  isTaskSelected ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300 bg-white'
+                }`}
+                onClick={() => handleTaskSelect(task.id)}
+              >
+                {isTaskSelected && <Check className="w-4 h-4" />}
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-gray-900">{task.title}</h3>
+                {task.description && (
+                  <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                )}
+              </div>
             </div>
             
             <div className="flex items-center gap-2">
@@ -102,13 +124,15 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
                   )}
                 </button>
               )}
-              <Button
-                size="sm"
-                variant={allSubtasksSelected ? "secondary" : "primary"}
-                onClick={() => handleSelectAllSubtasks(task)}
-              >
-                {allSubtasksSelected ? "Deselect All" : "Select All"}
-              </Button>
+              {hasSubtasks && (
+                <Button
+                  size="sm"
+                  variant={allSubtasksSelected ? "secondary" : "primary"}
+                  onClick={() => handleSelectAllSubtasks(task)}
+                >
+                  {allSubtasksSelected ? "Deselect All" : "Select All"}
+                </Button>
+              )}
             </div>
           </div>
           
@@ -123,34 +147,36 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
                     className={`p-3 mb-2 rounded-lg border ${
                       isSelected 
                         ? 'bg-red-50 border-red-200 shadow-sm' 
-                        : hoveredTaskId === task.id
-                          ? 'bg-gray-50 border-gray-300 shadow-sm'
-                          : 'bg-gray-50 border-gray-200'
+                        : 'bg-gray-50 border-gray-200'
                     }`}
                     onMouseEnter={() => setHoveredTaskId(task.id)}
                     onMouseLeave={() => setHoveredTaskId(null)}
                   >
                     <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium text-gray-800">
-                          {subtask.summary}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {subtask.description}
-                        </p>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                          <span>{subtask.estimatedTime} min</span>
-                          <span>{subtask.type}</span>
-                          <span>{'★'.repeat(subtask.difficulty)}</span>
+                      <div className="flex items-start">
+                        <div 
+                          className={`w-5 h-5 mr-3 border rounded flex items-center justify-center cursor-pointer ${
+                            isSelected ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300 bg-white'
+                          }`}
+                          onClick={() => handleSubtaskSelect(task.id, subtask.id)}
+                        >
+                          {isSelected && <Check className="w-3 h-3" />}
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium text-gray-800">
+                            {subtask.summary}
+                          </h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {subtask.description}
+                          </p>
+                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                            <span>{subtask.estimatedTime} min</span>
+                            <span>{subtask.type}</span>
+                            <span>{'★'.repeat(subtask.difficulty)}</span>
+                          </div>
                         </div>
                       </div>
-                      <Button
-                        size="sm"
-                        variant={isSelected ? 'secondary' : 'primary'}
-                        onClick={() => onTaskSelect(task.id, [subtask.id])}
-                      >
-                        {isSelected ? 'Deselect' : 'Select'}
-                      </Button>
                     </div>
                   </div>
                 );
@@ -210,16 +236,37 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
 
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
         {availableTasks.length > 0 && (
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-between mb-4">
+            <div className="text-sm text-gray-600">
+              {selectedTaskIds.length > 0 || selectedSubtaskIds.length > 0 ? (
+                <span>
+                  Selected: {selectedTaskIds.length} tasks, {selectedSubtaskIds.length} subtasks
+                </span>
+              ) : (
+                <span>No items selected</span>
+              )}
+            </div>
+            
             <Button
               onClick={() => {
+                // Get all subtask IDs from available tasks
                 const allSubtaskIds = availableTasks
                   .flatMap(task => task.subTasks || [])
                   .map(st => st.id);
-                onTaskSelect('', allSubtaskIds);
+                
+                // Check if all are already selected
+                const allSelected = allSubtaskIds.length > 0 && 
+                  allSubtaskIds.every(id => selectedSubtaskIds.includes(id));
+                
+                // If all selected, deselect all, otherwise select all
+                onTaskSelect('', allSelected ? allSubtaskIds : []);
               }}
             >
-              Select All Subtasks
+              {availableTasks.flatMap(task => task.subTasks || []).every(
+                st => selectedSubtaskIds.includes(st.id)
+              ) 
+                ? "Deselect All Subtasks" 
+                : "Select All Subtasks"}
             </Button>
           </div>
         )}
@@ -242,4 +289,4 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   );
 };
 
-export default TaskSelectionPage
+export default TaskSelectionPage;
