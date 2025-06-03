@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, Clock, Star } from 'lucide-react';
+import { PlusCircle, Clock, Star, Sparkles } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
 
@@ -11,6 +11,17 @@ const CreateTaskForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [estimatedTime, setEstimatedTime] = useState<number | undefined>(undefined);
   const [difficulty, setDifficulty] = useState<1 | 2 | 3 | 4 | 5>(3);
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  const handleAISuggestion = async () => {
+    if (!title.trim()) {
+      setTitleError(true);
+      return;
+    }
+    setIsGenerating(true);
+    // AI integration will be added here
+    setIsGenerating(false);
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,6 +86,18 @@ const CreateTaskForm: React.FC = () => {
             placeholder="Enter task description"
             rows={2}
           />
+        </div>
+        
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleAISuggestion}
+            disabled={isGenerating}
+            icon={<Sparkles className="w-4 h-4" />}
+          >
+            AI Suggestion
+          </Button>
         </div>
         
         <div>
