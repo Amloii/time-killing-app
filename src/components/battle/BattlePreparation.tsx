@@ -18,6 +18,10 @@ const BattlePreparation: React.FC = () => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
   };
   
+  const handleRemoveSubtask = (subtaskId: string) => {
+    setSelectedSubtaskIds(prev => prev.filter(id => id !== subtaskId));
+  };
+  
   const selectedTasks = selectedTaskIds
     .map(id => tasks.find(task => task.id === id))
     .filter((task): task is NonNullable<typeof task> => task !== undefined);
@@ -179,7 +183,11 @@ const BattlePreparation: React.FC = () => {
                     className="space-y-2 mb-4"
                   >
                     {selectedTasks.map((task, index) => (
-                      <Draggable key={task.id} draggableId={task.id} index={index}>
+                      <Draggable 
+                        key={task.id} 
+                        draggableId={task.id} 
+                        index={index}
+                      >
                         {(provided, snapshot) => (
                           <div
                             ref={provided.innerRef}
@@ -231,6 +239,59 @@ const BattlePreparation: React.FC = () => {
                         )}
                       </Draggable>
                     ))}
+                    {selectedSubtasks.map((subtask, index) => {
+                      const parentTask = tasks.find(t => 
+                        t.subTasks?.some(st => st.id === subtask.id)
+                      );
+                      
+                      return (
+                        <div
+                          key={subtask.id}
+                          className="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md ml-4"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="text-sm text-gray-500 mb-1">
+                                From: {parentTask?.title}
+                              </div>
+                              <h3 className="font-medium text-gray-900">
+                                {subtask.summary}
+                              </h3>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {subtask.description}
+                              </p>
+                              <div className="flex items-center mt-2 space-x-4">
+                                <div className="flex items-center text-sm text-gray-500">
+                                  <Clock className="w-4 h-4 mr-1" />
+                                  <span>{subtask.estimatedTime} min</span>
+                                </div>
+                                <div className="flex items-center">
+                                  <span className="text-sm text-gray-500 mr-1">
+                                    Difficulty:
+                                  </span>
+                                  <div className="flex">
+                                    {Array.from({ length: subtask.difficulty }).map((_, i) => (
+                                      <span key={i} className="text-yellow-500">★</span>
+                                    ))}
+                                  </div>
+                                </div>
+                                <span className="text-sm text-gray-500">
+                                  {subtask.type}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleRemoveSubtask(subtask.id)}
+                              className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}
@@ -253,12 +314,12 @@ const BattlePreparation: React.FC = () => {
         <Button 
           onClick={handleStartBattle}
           size="lg"
-          disabled={selectedTaskIds.length === 0}
+          disabled={selectedTaskIds.length === 0 && selectedSubtaskIds.length === 0}
           icon={<Swords className="w-5 h-5" />}
         >
           Begin Battle
         </Button>
-        {selectedTaskIds.length === 0 && (
+        {selectedTaskIds.length === 0 && selectedSubtaskIds.length === 0 && (
           <p className="text-sm text-gray-500 mt-2">Select at least one task to begin</p>
         )}
       </div>
