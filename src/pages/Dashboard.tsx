@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useAppStore } from '../store';
 import TaskList from '../components/tasks/TaskList';
 import CreateTaskForm from '../components/tasks/CreateTaskForm';
+import { useNavigate } from 'react-router-dom';
 import BattlePreparation from '../components/battle/BattlePreparation';
 import TaskChopTable from '../components/tasks/TaskChopTable';
 import ActiveBattle from '../components/battle/ActiveBattle';
@@ -13,6 +14,7 @@ import { Settings as SettingsIcon, Plus, List, Scissors } from 'lucide-react';
 const Dashboard: React.FC = () => {
   const { tasks, battleActive } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
   
