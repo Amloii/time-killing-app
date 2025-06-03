@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, BarChart2, Menu } from 'lucide-react';
+import { Home, BarChart2, List, Scissors } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface LayoutProps {
