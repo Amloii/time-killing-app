@@ -22,11 +22,27 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   const { tasks } = useAppStore();
   const navigateToTab = useNavigateToTab();
   const [expandedTasks, setExpandedTasks] = React.useState<string[]>([]);
+  const [selectedSubtasksMap, setSelectedSubtasksMap] = React.useState<Record<string, boolean>>({});
   
   const availableTasks = tasks.filter(task => 
     !task.completed && 
     !selectedTaskIds.includes(task.id)
   );
+  
+  const handleSelectAllSubtasks = (task: Task) => {
+    if (!task.subTasks) return;
+    
+    const allSelected = task.subTasks.every(st => selectedSubtasksMap[st.id]);
+    const subtaskIds = task.subTasks.map(st => st.id);
+    
+    if (allSelected) {
+      // Deselect all subtasks
+      onTaskSelect(task.id, subtaskIds);
+    } else {
+      // Select all subtasks
+      onTaskSelect(task.id, subtaskIds);
+    }
+  };
   
   const toggleTaskExpansion = (taskId: string) => {
     setExpandedTasks(prev => 
@@ -39,6 +55,8 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   const renderTask = (task: Task) => {
     const hasSubtasks = task.subTasks && task.subTasks.length > 0;
     const isExpanded = expandedTasks.includes(task.id);
+    const allSubtasksSelected = hasSubtasks && 
+      task.subTasks.every(st => selectedSubtaskIds.includes(st.id));
     
     return (
       <div key={task.id} className="mb-4">
@@ -66,9 +84,10 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
               )}
               <Button
                 size="sm"
-                onClick={() => onTaskSelect(task.id)}
+                variant={allSubtasksSelected ? "secondary" : "primary"}
+                onClick={() => handleSelectAllSubtasks(task)}
               >
-                Select All
+                {allSubtasksSelected ? "Deselect All" : "Select All"}
               </Button>
             </div>
           </div>
@@ -137,6 +156,20 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
       </div>
 
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
+        {availableTasks.length > 0 && (
+          <div className="flex justify-end mb-4">
+            <Button
+              onClick={() => {
+                const allSubtaskIds = availableTasks
+                  .flatMap(task => task.subTasks || [])
+                  .map(st => st.id);
+                onTaskSelect('', allSubtaskIds);
+              }}
+            >
+              Select All Subtasks
+            </Button>
+          </div>
+        )}
         {availableTasks.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-500 mb-4">No tasks available for battle</p>
