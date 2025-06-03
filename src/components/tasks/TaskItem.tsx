@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Draggable } from 'react-beautiful-dnd';
-import { Check, Trash, Clock, Star } from 'lucide-react';
+import { Check, Trash, Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { Task } from '../../types';
 import { useAppStore } from '../../store';
 
@@ -13,6 +13,7 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) => {
   const { completeTask, deleteTask } = useAppStore();
+  const [showSubtasks, setShowSubtasks] = useState(false);
   
   // Render difficulty stars
   const renderDifficulty = () => (
@@ -29,6 +30,39 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
           <h3 className="font-medium text-gray-900">{task.title}</h3>
           {task.description && (
             <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+          )}
+          
+          {task.subTasks && task.subTasks.length > 0 && (
+            <div className="mt-2">
+              <button
+                onClick={() => setShowSubtasks(!showSubtasks)}
+                className="text-sm text-gray-600 flex items-center hover:text-gray-800"
+              >
+                {showSubtasks ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
+                {task.subTasks.length} subtasks
+              </button>
+              
+              {showSubtasks && (
+                <div className="mt-2 space-y-2 pl-4 border-l-2 border-gray-200">
+                  {task.subTasks.map((subtask) => (
+                    <div key={subtask.id} className="text-sm">
+                      <div className="font-medium text-gray-800">{subtask.summary}</div>
+                      <div className="text-gray-600 mt-1">{subtask.description}</div>
+                      <div className="flex items-center gap-4 mt-1 text-gray-500">
+                        <span className="flex items-center">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {subtask.estimatedTime} min
+                        </span>
+                        <span>{subtask.type}</span>
+                        <span className="flex">
+                          {'★'.repeat(subtask.difficulty)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
           
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
