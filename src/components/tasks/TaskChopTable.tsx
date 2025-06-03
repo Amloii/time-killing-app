@@ -9,7 +9,7 @@ import { TaskType, SubTask } from '../../types';
 import { toast } from 'sonner';
 
 const TASK_TYPES: TaskType[] = ['Research', 'Development', 'Design', 'Testing', 'Documentation'];
-const TIME_OPTIONS = [15, 30, 60, 120, 240, 480];
+const TIME_OPTIONS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 480];
 
 const TaskChopTable: React.FC = () => {
   const [mainTask, setMainTask] = useState('');
