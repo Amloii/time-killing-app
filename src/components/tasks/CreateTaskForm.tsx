@@ -7,6 +7,7 @@ const CreateTaskForm: React.FC = () => {
   const { addTask } = useAppStore();
   
   const [title, setTitle] = useState('');
+  const [titleError, setTitleError] = useState(false);
   const [description, setDescription] = useState('');
   const [estimatedTime, setEstimatedTime] = useState<number | undefined>(undefined);
   const [difficulty, setDifficulty] = useState<1 | 2 | 3 | 4 | 5>(3);
@@ -14,7 +15,10 @@ const CreateTaskForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setTitleError(true);
+      return;
+    }
     
     addTask({
       title: title.trim(),
@@ -24,6 +28,7 @@ const CreateTaskForm: React.FC = () => {
     });
     
     // Reset form
+    setTitleError(false);
     setTitle('');
     setDescription('');
     setEstimatedTime(undefined);
@@ -43,11 +48,19 @@ const CreateTaskForm: React.FC = () => {
             id="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setTitleError(false);
+            }}
+            className={`mt-1 block w-full rounded-md shadow-sm p-2 border ${
+              titleError ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+            }`}
             placeholder="Enter task title"
             required
           />
+          {titleError && (
+            <p className="mt-1 text-sm text-red-600">Task title is required</p>
+          )}
         </div>
         
         <div>
