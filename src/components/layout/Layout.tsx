@@ -11,7 +11,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   
   const navItems = [
-    { path: '/dashboard', icon: Home, label: 'Home' },
+    { path: '/dashboard/battle', icon: Swords, label: 'Battle' },
+    { path: '/dashboard/tasks', icon: ListChecks, label: 'Tasks' },
+    { path: '/dashboard/chop', icon: Scissors, label: 'Chop' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
 
@@ -20,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main className="flex-1 pb-16">{children}</main>
       
       <nav className="fixed bottom-0 left-0 right-0 bg-white bg-opacity-90 backdrop-blur-lg border-t border-gray-200 safe-area-inset">
-        <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-around">
+        <div className="max-w-xl mx-auto px-4 h-16 flex items-center justify-between">
           {navItems.map(({ path, icon: Icon, label }) => {
             const isActive = location.pathname.startsWith(path);
             
@@ -28,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 key={path}
                 to={path}
-                className="relative flex flex-col items-center"
+                className="relative flex flex-col items-center px-2"
               >
                 <motion.div
                   whileTap={{ scale: 0.9 }}
@@ -37,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   }`}
                 >
                   <Icon className="w-6 h-6" />
-                  <span className="text-xs mt-1">{label}</span>
+                  <span className="text-xs mt-0.5">{label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
