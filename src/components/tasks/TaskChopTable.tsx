@@ -122,8 +122,9 @@ const TaskChopTable: React.FC = () => {
             type="text"
             value={mainTask}
             onChange={(e) => setMainTask(e.target.value)}
-            className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
+            className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 h-10 px-3"
             placeholder="Enter the main task to break down"
+            maxLength={100}
           />
           <Button
             onClick={handleAnalyze}
