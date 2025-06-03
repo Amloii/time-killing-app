@@ -37,44 +37,6 @@ const Dashboard: React.FC = () => {
       </header>
       
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 border-b-2 border-red-200">
-          <nav className="flex space-x-4">
-            <button
-              onClick={() => setActiveTab('battle')}
-              className={`py-3 px-4 border-b-2 font-medium ${
-                activeTab === 'battle'
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-600 hover:text-red-500'
-              }`}
-            >
-              Prepare for Battle
-            </button>
-            
-            <button
-              onClick={() => setActiveTab('tasks')}
-              className={`py-3 px-4 border-b-2 font-medium flex items-center ${
-                activeTab === 'tasks'
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <List className="w-4 h-4 mr-1" />
-              Task Management
-            </button>
-            
-            <button
-              onClick={() => setActiveTab('chop')}
-              className={`py-3 px-4 border-b-2 font-medium flex items-center ${
-                activeTab === 'chop'
-                  ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              <Scissors className="w-4 h-4 mr-1" />
-              Task Chop
-            </button>
-          </nav>
-        </div>
         
         {activeTab === 'chop' ? (
           <TaskChopTable />
