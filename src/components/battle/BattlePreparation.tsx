@@ -64,7 +64,6 @@ const BattlePreparation: React.FC = () => {
   
   const handleTaskSelect = (taskId: string, subtaskIds?: string[]) => {
     if (taskId && !subtaskIds) {
-      // Toggle selection for a full task
       setSelectedTaskIds(prev => {
         const isSelected = prev.includes(taskId);
         return isSelected 
@@ -72,25 +71,26 @@ const BattlePreparation: React.FC = () => {
           : [...prev, taskId];
       });
       
-      // Clear any selected subtasks for this task
       const task = tasks.find(t => t.id === taskId);
       if (task?.subTasks) {
         setSelectedSubtaskIds(prev => 
           prev.filter(id => !task.subTasks?.some(st => st.id === id))
         );
       }
-    } else if (subtaskIds && subtaskIds.length > 0) {
-      // Handle subtask selection/deselection
+    } else if (subtaskIds) {
       setSelectedSubtaskIds(prev => {
-        // Check if we're deselecting
-        const allSelected = subtaskIds.every(id => prev.includes(id));
-        
-        if (allSelected) {
-          // Deselect these subtasks
-          return prev.filter(id => !subtaskIds.includes(id));
+        if (subtaskIds.length === 1) {
+          // Single subtask toggle
+          const subtaskId = subtaskIds[0];
+          return prev.includes(subtaskId)
+            ? prev.filter(id => id !== subtaskId)
+            : [...prev, subtaskId];
         } else {
-          // Add these subtasks
-          return [...prev, ...subtaskIds.filter(id => !prev.includes(id))];
+          // Multiple subtasks toggle
+          const allSelected = subtaskIds.every(id => prev.includes(id));
+          return allSelected
+            ? prev.filter(id => !subtaskIds.includes(id))
+            : [...prev, ...subtaskIds.filter(id => !prev.includes(id))];
         }
       });
     }
