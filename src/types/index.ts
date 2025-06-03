@@ -27,3 +27,14 @@ export interface AppSettings {
   defaultTags: string[];
   keyboardShortcutsEnabled: boolean;
 }
+
+export type TaskType = 'Research' | 'Development' | 'Design' | 'Testing' | 'Documentation';
+
+export interface SubTask {
+  id: string;
+  description: string;
+  estimatedTime: number;
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  type: TaskType;
+  parentTaskId?: string;
+}

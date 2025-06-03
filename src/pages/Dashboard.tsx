@@ -3,10 +3,11 @@ import { useAppStore } from '../store';
 import TaskList from '../components/tasks/TaskList';
 import CreateTaskForm from '../components/tasks/CreateTaskForm';
 import BattlePreparation from '../components/battle/BattlePreparation';
+import TaskChopTable from '../components/tasks/TaskChopTable';
 import ActiveBattle from '../components/battle/ActiveBattle';
 import SettingsPanel from '../components/settings/SettingsPanel';
 import Button from '../components/common/Button';
-import { Settings as SettingsIcon, Plus, List } from 'lucide-react';
+import { Settings as SettingsIcon, Plus, List, Scissors } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { tasks, battleActive } = useAppStore();
@@ -58,10 +59,24 @@ const Dashboard: React.FC = () => {
               <List className="w-4 h-4 mr-1" />
               Task Management
             </button>
+            
+            <button
+              onClick={() => setActiveTab('chop')}
+              className={`py-3 px-4 border-b-2 font-medium flex items-center ${
+                activeTab === 'chop'
+                  ? 'border-red-600 text-red-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Scissors className="w-4 h-4 mr-1" />
+              Task Chop
+            </button>
           </nav>
         </div>
         
-        {activeTab === 'battle' ? (
+        {activeTab === 'chop' ? (
+          <TaskChopTable />
+        ) : activeTab === 'battle' ? (
           <BattlePreparation />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">

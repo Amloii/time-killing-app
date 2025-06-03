@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Task, BattleSession, AppSettings } from '../types';
+import { Task, BattleSession, AppSettings, SubTask } from '../types';
 import { getTasks, saveTasks, getSessions, saveSessions, getSettings, saveSettings } from '../utils/localStorage';
 
 interface AppState {
@@ -7,7 +7,7 @@ interface AppState {
   currentSession: BattleSession | null;
   settings: AppSettings;
   battleActive: boolean;
-  activeTab: 'tasks' | 'battle';
+  activeTab: 'tasks' | 'battle' | 'chop';
   currentTaskIndex: number;
   timeRemaining: number;
   
@@ -27,7 +27,10 @@ interface AppState {
   updateSettings: (settings: Partial<AppSettings>) => void;
   
   // Navigation actions
-  setActiveTab: (tab: 'tasks' | 'battle') => void;
+  setActiveTab: (tab: 'tasks' | 'battle' | 'chop') => void;
+  
+  // Task Chop actions
+  addSubTasks: (parentTaskId: string, subTasks: Omit<SubTask, 'id'>[]) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -45,6 +48,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       id: Date.now().toString(),
       completed: false,
       createdAt: new Date().toISOString(),
+      subTasks: [],
       ...task,
     };
     
@@ -186,5 +190,29 @@ export const useAppStore = create<AppState>((set, get) => ({
   // Navigation actions
   setActiveTab: (tab) => {
     set({ activeTab: tab });
+  },
+  
+  // Task Chop actions
+  addSubTasks: (parentTaskId, subTasks) => {
+    set((state) => {
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id === parentTaskId) {
+          const newSubTasks = subTasks.map((subTask) => ({
+            ...subTask,
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            parentTaskId,
+          }));
+          
+          return {
+            ...task,
+            subTasks: [...(task.subTasks || []), ...newSubTasks],
+          };
+        }
+        return task;
+      });
+      
+      saveTasks(updatedTasks);
+      return { tasks: updatedTasks };
+    });
   },
 }));
