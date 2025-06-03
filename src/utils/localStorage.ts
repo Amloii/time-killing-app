@@ -34,6 +34,8 @@ export const getSettings = (): AppSettings => {
         soundEnabled: true,
         showAnimations: true,
         theme: 'light',
+        defaultTags: ['Work', 'Personal', 'Urgent', 'Important'],
+        keyboardShortcutsEnabled: true,
       };
 };
 

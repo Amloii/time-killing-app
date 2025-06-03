@@ -15,18 +15,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
   const { completeTask, deleteTask } = useAppStore();
   
   // Render difficulty stars
-  const renderDifficulty = () => {
-    const stars = [];
-    for (let i = 0; i < task.difficulty; i++) {
-      stars.push(
-        <Star 
-          key={i} 
-          className="w-4 h-4 text-yellow-500 fill-yellow-500" 
-        />
-      );
-    }
-    return <div className="flex space-x-1">{stars}</div>;
-  };
+  const renderDifficulty = () => (
+    <div className="flex space-x-1">
+      <span className="text-yellow-500">{'★'.repeat(task.difficulty)}</span>
+      <span className="text-gray-300">{'★'.repeat(5 - task.difficulty)}</span>
+    </div>
+  );
 
   const taskContent = (
     <div className="p-3 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
@@ -48,6 +42,18 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
               <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
               {renderDifficulty()}
             </div>
+            {task.tags && task.tags.length > 0 && (
+              <div className="flex gap-1">
+                {task.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         

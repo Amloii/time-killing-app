@@ -11,7 +11,10 @@ const CreateTaskForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [estimatedTime, setEstimatedTime] = useState<number | undefined>(undefined);
   const [difficulty, setDifficulty] = useState<1 | 2 | 3 | 4 | 5>(3);
+  const [tags, setTags] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showTagInput, setShowTagInput] = useState(false);
+  const [newTag, setNewTag] = useState('');
   
   const handleAISuggestion = async () => {
     if (!title.trim()) {
@@ -23,6 +26,24 @@ const CreateTaskForm: React.FC = () => {
     setIsGenerating(false);
   };
   
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
+    }
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim()) {
+      setTags([...tags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -36,6 +57,7 @@ const CreateTaskForm: React.FC = () => {
       description: description.trim() || undefined,
       estimatedTime,
       difficulty,
+      tags: tags.length > 0 ? tags : undefined,
     });
     
     // Reset form
@@ -44,10 +66,11 @@ const CreateTaskForm: React.FC = () => {
     setDescription('');
     setEstimatedTime(undefined);
     setDifficulty(3);
+    setTags([]);
   };
   
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg border border-gray-200">
+    <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="bg-white p-4 rounded-lg border border-gray-200">
       <h3 className="text-lg font-medium mb-4">Create New Task</h3>
       
       <div className="space-y-4">
@@ -127,20 +150,72 @@ const CreateTaskForm: React.FC = () => {
           </label>
           <div className="flex space-x-2 mt-2">
             {[1, 2, 3, 4, 5].map((level) => (
-              <button
+              <motion.button
                 key={level}
                 type="button"
                 onClick={() => setDifficulty(level as 1 | 2 | 3 | 4 | 5)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={`p-2 rounded-md ${
                   difficulty === level 
                     ? 'bg-yellow-100 text-yellow-700 border-yellow-300' 
                     : 'bg-gray-100 text-gray-600 border-gray-300'
                 } border`}
               >
-                {level}
-              </button>
+                {'★'.repeat(level)}
+              </motion.button>
             ))}
           </div>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tags
+          </label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm flex items-center"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="ml-1 text-gray-500 hover:text-red-500"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <button
+              type="button"
+              onClick={() => setShowTagInput(true)}
+              className="text-gray-500 hover:text-gray-700 text-sm"
+            >
+              + Add Tag
+            </button>
+          </div>
+          {showTagInput && (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                className="flex-1 rounded-md border-gray-300 shadow-sm p-2 text-sm"
+                placeholder="Enter tag name"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleAddTag}
+              >
+                Add
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       

@@ -7,6 +7,7 @@ export interface Task {
   completed: boolean;
   createdAt: string;
   completedAt?: string;
+  tags?: string[];
 }
 
 export interface BattleSession {
@@ -23,4 +24,6 @@ export interface AppSettings {
   soundEnabled: boolean;
   showAnimations: boolean;
   theme: 'light' | 'dark';
+  defaultTags: string[];
+  keyboardShortcutsEnabled: boolean;
 }
