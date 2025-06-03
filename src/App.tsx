@@ -12,8 +12,8 @@ function App() {
       <div className="bg-wave-pattern min-h-screen safe-area-inset">
         <Layout>
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard/battle\" replace />} />
-            <Route path="/dashboard/:tab" element={<Dashboard />} />
+            <Route path="/" element={<Navigate to="/dashboard\" replace />} />
+            <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/task/:taskId" element={<TaskDetails />} />
             <Route path="/statistics" element={<Statistics />} />
           </Routes>
