@@ -157,7 +157,7 @@ const TaskChopTable: React.FC = () => {
                       className="bg-gray-50 p-4 rounded-lg mb-2 border border-gray-200"
                     >
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="md:col-span-2">
+                        <div className="md:col-span-2 min-h-[4rem] flex flex-col">
                           <input
                             type="text"
                             value={subtask.description}
@@ -166,8 +166,9 @@ const TaskChopTable: React.FC = () => {
                                 description: e.target.value,
                               })
                             }
-                            className="w-full rounded-md border-gray-300 shadow-sm"
+                            className="w-full rounded-md border-gray-300 shadow-sm line-clamp-2 resize-none"
                             placeholder="Subtask description"
+                            style={{ height: '4rem' }}
                           />
                         </div>
                         
