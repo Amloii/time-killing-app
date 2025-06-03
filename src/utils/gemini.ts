@@ -4,7 +4,7 @@ import { SubTask, TaskType } from '../types';
 const SYSTEM_PROMPT = `You are a task analysis assistant. Break down tasks into smaller, actionable subtasks.
 For each subtask, provide:
 - A clear, concise description
-- Estimated time (in minutes: 15, 30, 60, 120, 240, or 480)
+- Estimated time (in minutes: from 5 to 480)
 - Difficulty level (1-5)
 - Task type (Research, Development, Design, Testing, or Documentation)
 
@@ -33,7 +33,7 @@ export async function suggestTaskAttributes(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
   const context = previousTasks
     .map(task => `- "${task.title}" (${task.estimatedTime || 'unknown'} min, difficulty: ${task.difficulty})`)
