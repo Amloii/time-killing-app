@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Draggable } from 'react-beautiful-dnd';
 import { Check, Trash, Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
