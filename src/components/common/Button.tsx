@@ -25,8 +25,8 @@ const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'font-medium rounded-md flex items-center justify-center transition-all active:scale-95 touch-none';
   
   const variantClasses = {
-    primary: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 tap-highlight-transparent',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 tap-highlight-transparent',
+    primary: 'bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 shadow-md hover:shadow-lg tap-highlight-transparent',
+    secondary: 'bg-white bg-opacity-90 text-gray-800 hover:bg-gray-50 active:bg-gray-100 border border-gray-200 shadow-sm hover:shadow tap-highlight-transparent',
     danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 tap-highlight-transparent',
   };
   

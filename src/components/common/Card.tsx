@@ -8,7 +8,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {
-  const baseClasses = 'bg-white border border-gray-200 rounded-lg shadow-sm p-4';
+  const baseClasses = 'bg-white bg-opacity-95 backdrop-blur-sm border border-gray-100 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow';
   
   return (
     <motion.div

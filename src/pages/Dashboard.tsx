@@ -22,27 +22,29 @@ const Dashboard: React.FC = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
+    <div className="min-h-screen bg-sakura p-2 sm:p-4">
       <header className="max-w-4xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">Fight Mode</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold japanese-brush text-red-600 tracking-wide">
+          Fight Mode
+        </h1>
         
         <button
           onClick={() => setShowSettings(true)}
-          className="p-2 rounded-full hover:bg-gray-200"
+          className="p-2 rounded-full hover:bg-red-50 text-red-600 transition-colors"
         >
           <SettingsIcon className="w-6 h-6" />
         </button>
       </header>
       
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 border-b border-gray-200">
+        <div className="mb-6 border-b-2 border-red-200">
           <nav className="flex space-x-4">
             <button
               onClick={() => setActiveTab('battle')}
               className={`py-3 px-4 border-b-2 font-medium ${
                 activeTab === 'battle'
                   ? 'border-red-600 text-red-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-gray-600 hover:text-red-500'
               }`}
             >
               Prepare for Battle
