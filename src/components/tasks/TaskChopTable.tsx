@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Sparkles, Plus, Save, Trash2 } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
+import { analyzeTask } from '../../utils/gemini';
 import { TaskType, SubTask } from '../../types';
 import { toast } from 'sonner';
 
@@ -14,35 +15,35 @@ const TaskChopTable: React.FC = () => {
   const [mainTask, setMainTask] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [subTasks, setSubTasks] = useState<(Omit<SubTask, 'id'> & { tempId: string })[]>([]);
-  const { addTask } = useAppStore();
+  const { addTask, settings } = useAppStore();
 
   const handleAnalyze = async () => {
     if (!mainTask.trim()) {
       toast.error('Please enter a task description');
       return;
     }
+    
+    if (!settings.geminiApiKey) {
+      toast.error('Please add your Gemini API key in settings');
+      return;
+    }
 
     setIsAnalyzing(true);
-    // Simulated AI response for now
-    const mockSubTasks = [
-      {
-        description: 'Research existing solutions',
-        estimatedTime: 30,
-        difficulty: 2 as const,
-        type: 'Research' as const,
-        tempId: 'temp-1',
-      },
-      {
-        description: 'Create initial design mockups',
-        estimatedTime: 60,
-        difficulty: 3 as const,
-        type: 'Design' as const,
-        tempId: 'temp-2',
-      },
-    ];
-
-    setSubTasks(mockSubTasks);
-    setIsAnalyzing(false);
+    
+    try {
+      const analyzedTasks = await analyzeTask(mainTask, settings.geminiApiKey);
+      setSubTasks(
+        analyzedTasks.map(task => ({
+          ...task,
+          tempId: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        }))
+      );
+      toast.success('Task analyzed successfully');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to analyze task');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleAddSubTask = () => {
