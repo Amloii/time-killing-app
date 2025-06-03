@@ -65,30 +65,35 @@ const BattlePreparation: React.FC = () => {
   }
   
   return (
-    <div className="p-4 max-w-4xl mx-auto overflow-hidden text-center">
+    <div className="p-4 max-w-4xl mx-auto overflow-hidden">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2">戦闘モード</h1>
-        <h2 className="text-2xl mb-4">戦いの準備</h2>
-        <p className="text-xl text-gray-600">Select your tasks and set your battle</p>
+        <h1 className="text-3xl font-bold mb-2">Prepare for Battle</h1>
+        <p className="text-gray-600">Select your tasks and set your battle duration</p>
       </div>
       
-      <div className="relative mb-12">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/4338020/pexels-photo-4338020.jpeg')] opacity-10 bg-cover bg-center"></div>
-        <div className="relative z-10">
-          <SamuraiMascot mood="ready" size={150} />
+      <div className="mb-8 flex justify-center">
+        <SamuraiMascot mood="ready" size={120} />
+      </div>
+      
+      <div className="mb-8 bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="p-6">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
+            <Timer className="w-5 h-5 mr-2" />
+            Battle Configuration
+          </h2>
           
-          <div className="mt-8 max-w-md mx-auto">
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-200">
-              <h3 className="text-lg font-medium text-gray-800 mb-4">Battle Duration</h3>
-              <div className="flex items-center justify-center space-x-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Battle Duration</h3>
+              <div className="flex items-center justify-center bg-gray-50 p-4 rounded-lg">
                 <Button 
                   onClick={() => handleDurationChange(-5)}
                   variant="secondary"
                   icon={<Minus className="w-4 h-4" />}
                 />
                 
-                <div className="text-center bg-green-50 px-6 py-3 rounded-xl">
-                  <span className="text-4xl font-bold text-red-600 font-mono">{duration}</span>
+                <div className="mx-4 text-center">
+                  <span className="text-4xl font-bold text-red-600">{duration}</span>
                   <span className="text-lg ml-2">minutes</span>
                 </div>
                 
@@ -98,12 +103,12 @@ const BattlePreparation: React.FC = () => {
                   icon={<Plus className="w-4 h-4" />}
                 />
               </div>
+            </div>
             
-              <div className="mt-6 bg-white/50 p-4 rounded-xl border border-gray-100">
-                <div className="text-lg font-medium mb-2">
-                  Battle Stats
-                </div>
-                <div className="flex justify-between items-center mb-2">
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Battle Stats</h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-600">Selected Tasks:</span>
                   <span className="font-bold">{selectedTasks.length}</span>
                 </div>
@@ -116,7 +121,7 @@ const BattlePreparation: React.FC = () => {
           </div>
         </div>
       </div>
-
+      
       <div className="mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
@@ -124,7 +129,7 @@ const BattlePreparation: React.FC = () => {
             {selectedTasks.length}
           </span>
         </div>
-
+        
         <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
           {selectedTasks.length === 0 ? (
             <div className="text-center py-8">
@@ -157,7 +162,7 @@ const BattlePreparation: React.FC = () => {
                               snapshot.isDragging ? 'scale-105 rotate-1 shadow-lg' : ''
                             }`}
                           >
-                            <div className="p-4 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg hover:shadow-md transition-all">
+                            <div className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md">
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                   <h3 className="font-medium text-gray-900">{task.title}</h3>
@@ -173,7 +178,7 @@ const BattlePreparation: React.FC = () => {
                                     )}
                                     <div className="flex items-center">
                                       <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
-                                      <div className="flex text-yellow-500">
+                                      <div className="flex">
                                         {Array.from({ length: task.difficulty }).map((_, i) => (
                                           <span key={i} className="text-yellow-500">★</span>
                                         ))}
@@ -217,7 +222,7 @@ const BattlePreparation: React.FC = () => {
         </div>
       </div>
       
-      <div className="mt-12 text-center mb-safe">
+      <div className="mt-8 text-center mb-safe">
         <Button 
           onClick={handleStartBattle}
           size="lg"
@@ -233,6 +238,5 @@ const BattlePreparation: React.FC = () => {
     </div>
   );
 };
-
 
 export default BattlePreparation;
