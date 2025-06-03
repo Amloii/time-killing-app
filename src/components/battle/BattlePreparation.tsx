@@ -13,6 +13,16 @@ const BattlePreparation: React.FC = () => {
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    
+    const items = Array.from(selectedTaskIds);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    setSelectedTaskIds(items);
+  };
+  
   const handleRemoveTask = (taskId: string) => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
   };
@@ -180,44 +190,68 @@ const BattlePreparation: React.FC = () => {
                                       <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
                                       <div className="flex">
                                         {Array.from({ length: task.difficulty }).map((_, i) => (
-                                          <span key={i} className="text-yellow-500">★</span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRemoveTask(task.id);
-                                  }}
-                                  className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
-                                >
-                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-              <Button
-                onClick={() => setShowTaskSelection(true)}
-                variant="secondary"
-                fullWidth
-                icon={<Plus className="w-5 h-5" />}
-                className="mt-4"
-              >
-                Add More Tasks
-              </Button>
-            </DragDropContext>
+           <DragDropContext onDragEnd={handleDragEnd}>
+             <Droppable droppableId="selected-tasks">
+               {(provided) => (
+                 <div
+                   {...provided.droppableProps}
+                   ref={provided.innerRef}
+                   className="space-y-2 mb-4"
+                 >
+                   {selectedTasks.map((task, index) => (
+                     <Draggable key={task.id} draggableId={task.id} index={index}>
+                       {(provided, snapshot) => (
+                         <div
+                           ref={provided.innerRef}
+                           {...provided.draggableProps}
+                           {...provided.dragHandleProps}
+                           className={`transition-all duration-200 ${
+                             snapshot.isDragging ? 'scale-105 rotate-1 shadow-lg' : ''
+                           }`}
+                         >
+                           <div className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md">
+                             <div className="flex justify-between items-start">
+                               <div className="flex-1">
+                                 <h3 className="font-medium text-gray-900">{task.title}</h3>
+                                 {task.description && (
+                                   <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                                 )}
+                                 <div className="flex items-center mt-2 space-x-4">
+                                   {task.estimatedTime && (
+                                     <div className="flex items-center text-sm text-gray-500">
+                                       <Clock className="w-4 h-4 mr-1" />
+                                       <span>{task.estimatedTime} min</span>
+                                     </div>
+                                   )}
+                                   <div className="flex items-center">
+                                     <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
+                                     <div className="flex">
+                                       {Array.from({ length: task.difficulty }).map((_, i) => (
+                                         <span key={i} className="text-yellow-500">★</span>
+                                       ))}
+                                     </div>
+                                   </div>
+                                 </div>
+                               </div>
+                               <button
+                                 onClick={() => handleRemoveTask(task.id)}
+                                 className="ml-2 p-1 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50 transition-colors"
+                               >
+                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                 </svg>
+                               </button>
+                             </div>
+                           </div>
+                         </div>
+                       )}
+                     </Draggable>
+                   ))}
+                   {provided.placeholder}
+                 </div>
+               )}
+             </Droppable>
+           </DragDropContext>
           )}
         </div>
       </div>
