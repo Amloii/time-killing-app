@@ -3,7 +3,7 @@ import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
-    <div className="bg-shoji min-h-screen safe-area-inset">
+    <div className="bg-wave-pattern min-h-screen safe-area-inset">
       <Dashboard />
     </div>
   );
