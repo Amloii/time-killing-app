@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, BarChart2, Menu, Swords, ListChecks, Scissors } from 'lucide-react';
+import { Home, BarChart2, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface LayoutProps {
@@ -12,18 +12,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navItems = [
     { path: '/dashboard/battle', icon: Swords, label: 'Battle' },
-    { path: '/dashboard/task-management', icon: ListChecks, label: 'Tasks' },
+    { path: '/dashboard/tasks', icon: ListChecks, label: 'Tasks' },
     { path: '/dashboard/chop', icon: Scissors, label: 'Chop' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
-
-  const isPathActive = (path: string) => {
-    if (path === '/statistics') {
-      return location.pathname === path;
-    }
-    const pathSegment = path.split('/').pop() || '';
-    return location.pathname.includes(pathSegment === 'task-management' ? 'tasks' : pathSegment);
-  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -32,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="fixed bottom-0 left-0 right-0 bg-white bg-opacity-90 backdrop-blur-lg border-t border-gray-200 safe-area-inset">
         <div className="max-w-xl mx-auto px-4 h-16 flex items-center justify-between">
           {navItems.map(({ path, icon: Icon, label }) => {
-            const isActive = isPathActive(path);
+            const isActive = location.pathname.startsWith(path);
             
             return (
               <Link
