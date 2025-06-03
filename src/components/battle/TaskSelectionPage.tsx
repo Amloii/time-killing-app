@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppStore } from '../../store';
 import TaskList from '../tasks/TaskList';
@@ -21,13 +21,33 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
 }) => {
   const { tasks } = useAppStore();
   const navigateToTab = useNavigateToTab();
+  const [searchQuery, setSearchQuery] = useState('');
   const [expandedTasks, setExpandedTasks] = React.useState<string[]>([]);
-  const [selectedSubtasksMap, setSelectedSubtasksMap] = React.useState<Record<string, boolean>>({});
+  const [hoveredTaskId, setHoveredTaskId] = React.useState<string | null>(null);
   
   const availableTasks = tasks.filter(task => 
     !task.completed && 
-    !selectedTaskIds.includes(task.id)
+    !selectedTaskIds.includes(task.id) &&
+    (searchQuery
+      ? task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      : true)
   );
+
+  // Handle keyboard shortcuts
+  React.useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onBack();
+      } else if (e.key === '/') {
+        e.preventDefault();
+        document.getElementById('search-input')?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onBack]);
   
   const handleSelectAllSubtasks = (task: Task) => {
     if (!task.subTasks) return;
@@ -102,9 +122,13 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
                     key={subtask.id}
                     className={`p-3 mb-2 rounded-lg border ${
                       isSelected 
-                        ? 'bg-red-50 border-red-200' 
-                        : 'bg-gray-50 border-gray-200'
+                        ? 'bg-red-50 border-red-200 shadow-sm' 
+                        : hoveredTaskId === task.id
+                          ? 'bg-gray-50 border-gray-300 shadow-sm'
+                          : 'bg-gray-50 border-gray-200'
                     }`}
+                    onMouseEnter={() => setHoveredTaskId(task.id)}
+                    onMouseLeave={() => setHoveredTaskId(null)}
                   >
                     <div className="flex items-start justify-between">
                       <div>
@@ -141,18 +165,47 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <div className="flex items-center mb-6">
-        <Button
-          onClick={onBack}
-          variant="secondary"
-          icon={<ArrowLeft className="w-5 h-5" />}
-        >
-          Back to Battle
-        </Button>
+        <div className="flex items-center gap-4 w-full">
+          <Button
+            onClick={onBack}
+            variant="secondary"
+            icon={<ArrowLeft className="w-5 h-5" />}
+          >
+            Back to Battle
+          </Button>
+          
+          <div className="flex-1 relative">
+            <input
+              id="search-input"
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tasks... (Press '/' to focus)"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-red-500 focus:ring-red-500"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Select Tasks</h1>
-        <p className="text-gray-600">Choose tasks to add to your battle</p>
+        <div className="flex items-center justify-between">
+          <p className="text-gray-600">Choose tasks to add to your battle</p>
+          <div className="text-sm text-gray-500">
+            <kbd className="px-2 py-1 bg-gray-100 rounded-md mr-2">/</kbd>
+            to search
+            <kbd className="px-2 py-1 bg-gray-100 rounded-md mx-2">Esc</kbd>
+            to go back
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">

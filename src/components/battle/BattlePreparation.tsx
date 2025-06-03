@@ -13,6 +13,7 @@ const BattlePreparation: React.FC = () => {
   const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   
   const handleRemoveTask = (taskId: string) => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
@@ -77,9 +78,12 @@ const BattlePreparation: React.FC = () => {
   
   // Start the battle
   const handleStartBattle = () => {
-    if (selectedTaskIds.length === 0) return;
-    createSession(duration, selectedTaskIds);
-    startBattle();
+    if (totalEstimatedTime > duration * 60) {
+      setShowConfirmation(true);
+    } else {
+      createSession(duration, selectedTaskIds);
+      startBattle();
+    }
   };
   
   if (showTaskSelection) {
@@ -323,6 +327,35 @@ const BattlePreparation: React.FC = () => {
           <p className="text-sm text-gray-500 mt-2">Select at least one task to begin</p>
         )}
       </div>
+      
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Time Mismatch Warning</h3>
+            <p className="text-gray-600 mb-6">
+              The total estimated time ({totalEstimatedTime} min) exceeds your battle duration ({duration} min).
+              Are you sure you want to proceed?
+            </p>
+            <div className="flex justify-end gap-4">
+              <Button
+                variant="secondary"
+                onClick={() => setShowConfirmation(false)}
+              >
+                Adjust Duration
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowConfirmation(false);
+                  createSession(duration, selectedTaskIds);
+                  startBattle();
+                }}
+              >
+                Start Anyway
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
