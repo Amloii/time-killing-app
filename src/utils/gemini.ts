@@ -76,7 +76,7 @@ export async function analyzeTask(task: string, apiKey: string): Promise<Omit<Su
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
   const prompt = `${SYSTEM_PROMPT}\n\nTask to analyze: ${task}`;
 
