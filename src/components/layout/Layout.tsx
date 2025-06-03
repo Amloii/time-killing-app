@@ -12,7 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navItems = [
     { path: '/dashboard/battle', icon: Swords, label: 'Battle' },
-    { path: '/dashboard/tasks', icon: ListChecks, label: 'Tasks' },
+    { path: '/dashboard/task-management', icon: ListChecks, label: 'Tasks' },
     { path: '/dashboard/chop', icon: Scissors, label: 'Chop' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
@@ -21,7 +21,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (path === '/statistics') {
       return location.pathname === path;
     }
-    return location.pathname.includes(path.split('/').pop() || '');
+    const pathSegment = path.split('/').pop() || '';
+    return location.pathname.includes(pathSegment === 'task-management' ? 'tasks' : pathSegment);
   };
 
   return (
