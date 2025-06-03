@@ -10,6 +10,66 @@ For each subtask, provide:
 
 Format your response as a JSON array of subtasks.`;
 
+const TASK_SUGGESTION_PROMPT = `You are a task estimation assistant. Based on the task description and previous tasks, suggest appropriate time estimates and difficulty levels.
+
+Consider:
+- Task complexity and scope
+- Similar previous tasks
+- Required skills and experience
+
+Format your response as JSON with:
+- estimatedTime (in minutes: 15, 30, 60, 120, 240, or 480)
+- difficulty (1-5)
+- explanation (brief justification)`;
+
+export async function suggestTaskAttributes(
+  taskTitle: string,
+  taskDescription: string | undefined,
+  previousTasks: Array<{ title: string; estimatedTime?: number; difficulty: number }>,
+  apiKey: string
+): Promise<{ estimatedTime: number; difficulty: number; explanation: string }> {
+  if (!apiKey) {
+    throw new Error('Gemini API key is required');
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+  const context = previousTasks
+    .map(task => `- "${task.title}" (${task.estimatedTime || 'unknown'} min, difficulty: ${task.difficulty})`)
+    .join('\n');
+
+  const prompt = `${TASK_SUGGESTION_PROMPT}
+
+Current task:
+Title: ${taskTitle}
+${taskDescription ? `Description: ${taskDescription}` : ''}
+
+Previous tasks for context:
+${context}`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Invalid response format');
+    }
+    
+    const suggestion = JSON.parse(jsonMatch[0]);
+    
+    return {
+      estimatedTime: validateTime(suggestion.estimatedTime),
+      difficulty: validateDifficulty(suggestion.difficulty),
+      explanation: suggestion.explanation || 'Based on task complexity and similar previous tasks',
+    };
+  } catch (error) {
+    console.error('Gemini API error:', error);
+    throw new Error('Failed to generate suggestions. Please try again.');
+  }
+}
 export async function analyzeTask(task: string, apiKey: string): Promise<Omit<SubTask, 'id'>[]> {
   if (!apiKey) {
     throw new Error('Gemini API key is required');

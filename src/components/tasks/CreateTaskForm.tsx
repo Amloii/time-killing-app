@@ -3,9 +3,11 @@ import { PlusCircle, Clock, Star, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
+import { suggestTaskAttributes } from '../../utils/gemini';
+import { toast } from 'sonner';
 
 const CreateTaskForm: React.FC = () => {
-  const { addTask } = useAppStore();
+  const { addTask, tasks, settings } = useAppStore();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -20,11 +22,38 @@ const CreateTaskForm: React.FC = () => {
   const handleAISuggestion = async () => {
     if (!title.trim()) {
       setTitleError(true);
+      toast.error('Please enter a task title first');
       return;
     }
+    
+    if (!settings.geminiApiKey) {
+      toast.error('Please add your Gemini API key in settings');
+      return;
+    }
+    
     setIsGenerating(true);
-    // AI integration will be added here
-    setIsGenerating(false);
+    
+    try {
+      const previousTasks = tasks
+        .filter(task => task.estimatedTime && !task.completed)
+        .slice(-5);
+      
+      const suggestion = await suggestTaskAttributes(
+        title,
+        description,
+        previousTasks,
+        settings.geminiApiKey
+      );
+      
+      setEstimatedTime(suggestion.estimatedTime);
+      setDifficulty(suggestion.difficulty);
+      
+      toast.success(suggestion.explanation);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to generate suggestions');
+    } finally {
+      setIsGenerating(false);
+    }
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -116,11 +145,11 @@ const CreateTaskForm: React.FC = () => {
           <Button
             type="button"
             variant="secondary"
+            disabled={isGenerating || !title.trim()}
             onClick={handleAISuggestion}
-            disabled={isGenerating}
             icon={<Sparkles className="w-4 h-4" />}
           >
-            AI Suggestion
+            {isGenerating ? 'Analyzing...' : 'AI Suggestion'}
           </Button>
         </div>
         
