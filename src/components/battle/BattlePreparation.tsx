@@ -15,32 +15,51 @@ const BattlePreparation: React.FC = () => {
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
-  const handleRemoveTask = (taskId: string) => {
-    setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
-  };
-  
-  const handleRemoveSubtask = (subtaskId: string) => {
-    setSelectedSubtaskIds(prev => prev.filter(id => id !== subtaskId));
-  };
-  
-  const selectedTasks = selectedTaskIds
-    .map(id => tasks.find(task => task.id === id))
-    .filter((task): task is NonNullable<typeof task> => task !== undefined);
-    
-  const selectedSubtasks = tasks
-    .flatMap(task => task.subTasks || [])
-    .filter(subtask => selectedSubtaskIds.includes(subtask.id));
+  // Get selected tasks and their subtasks
+  const selectedItems = React.useMemo(() => {
+    const selectedTasks = selectedTaskIds
+      .map(id => tasks.find(task => task.id === id))
+      .filter((task): task is NonNullable<typeof task> => task !== undefined);
+      
+    const selectedSubtasks = tasks
+      .flatMap(task => task.subTasks || [])
+      .filter(subtask => selectedSubtaskIds.includes(subtask.id));
+      
+    return { selectedTasks, selectedSubtasks };
+  }, [tasks, selectedTaskIds, selectedSubtaskIds]);
   
   // Calculate estimated total time
-  const totalEstimatedTime = selectedSubtasks.length > 0
-    ? selectedSubtasks.reduce((total, subtask) => total + subtask.estimatedTime, 0)
-    : selectedTasks.reduce((total, task) => total + (task.estimatedTime || 0), 0
-  );
+  const totalEstimatedTime = React.useMemo(() => {
+    const taskTime = selectedItems.selectedTasks.reduce(
+      (total, task) => total + (task.estimatedTime || 0), 
+      0
+    );
+    const subtaskTime = selectedItems.selectedSubtasks.reduce(
+      (total, subtask) => total + subtask.estimatedTime,
+      0
+    );
+    return taskTime + subtaskTime;
+  }, [selectedItems]);
   
   // Handle duration change
   const handleDurationChange = (amount: number) => {
     const newDuration = Math.max(5, Math.min(60, duration + amount));
     setDuration(newDuration);
+  };
+
+  const handleRemoveTask = (taskId: string) => {
+    setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
+    // Also remove any selected subtasks from this task
+    const task = tasks.find(t => t.id === taskId);
+    if (task?.subTasks) {
+      setSelectedSubtaskIds(prev => 
+        prev.filter(id => !task.subTasks?.some(st => st.id === id))
+      );
+    }
+  };
+  
+  const handleRemoveSubtask = (subtaskId: string) => {
+    setSelectedSubtaskIds(prev => prev.filter(id => id !== subtaskId));
   };
   
   const handleTaskSelect = (taskId: string, subtaskIds?: string[]) => {
@@ -80,10 +99,19 @@ const BattlePreparation: React.FC = () => {
   const handleStartBattle = () => {
     if (totalEstimatedTime > duration * 60) {
       setShowConfirmation(true);
-    } else {
-      createSession(duration, selectedTaskIds);
-      startBattle();
+      return;
     }
+    
+    // Combine selected tasks and parent tasks of selected subtasks
+    const allTaskIds = new Set([
+      ...selectedTaskIds,
+      ...selectedItems.selectedSubtasks.map(st => 
+        tasks.find(t => t.subTasks?.some(s => s.id === st.id))?.id
+      ).filter((id): id is string => id !== undefined)
+    ]);
+    
+    createSession(duration, Array.from(allTaskIds));
+    startBattle();
   };
   
   if (showTaskSelection) {
@@ -144,7 +172,7 @@ const BattlePreparation: React.FC = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Selected Tasks:</span>
                   <span className="font-bold">
-                    {selectedSubtasks.length || selectedTasks.length}
+                    {selectedItems.selectedTasks.length + selectedItems.selectedSubtasks.length}
                   </span>
                 </div>
                 <div className="flex justify-between items-center mt-2">
@@ -161,12 +189,12 @@ const BattlePreparation: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Selected Battle Tasks</h2>
           <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">
-            {selectedTasks.length}
+            {selectedItems.selectedTasks.length + selectedItems.selectedSubtasks.length}
           </span>
         </div>
         
         <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
-          {selectedTasks.length === 0 ? (
+          {selectedItems.selectedTasks.length === 0 && selectedItems.selectedSubtasks.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">No tasks selected for this battle</p>
               <Button
@@ -186,7 +214,7 @@ const BattlePreparation: React.FC = () => {
                     ref={provided.innerRef}
                     className="space-y-2 mb-4"
                   >
-                    {selectedTasks.map((task, index) => (
+                    {selectedItems.selectedTasks.map((task, index) => (
                       <Draggable 
                         key={task.id} 
                         draggableId={task.id} 
@@ -243,7 +271,7 @@ const BattlePreparation: React.FC = () => {
                         )}
                       </Draggable>
                     ))}
-                    {selectedSubtasks.map((subtask, index) => {
+                    {selectedItems.selectedSubtasks.map((subtask) => {
                       const parentTask = tasks.find(t => 
                         t.subTasks?.some(st => st.id === subtask.id)
                       );
@@ -318,12 +346,12 @@ const BattlePreparation: React.FC = () => {
         <Button 
           onClick={handleStartBattle}
           size="lg"
-          disabled={selectedTaskIds.length === 0 && selectedSubtaskIds.length === 0}
+          disabled={selectedItems.selectedTasks.length === 0 && selectedItems.selectedSubtasks.length === 0}
           icon={<Swords className="w-5 h-5" />}
         >
           Begin Battle
         </Button>
-        {selectedTaskIds.length === 0 && selectedSubtaskIds.length === 0 && (
+        {selectedItems.selectedTasks.length === 0 && selectedItems.selectedSubtasks.length === 0 && (
           <p className="text-sm text-gray-500 mt-2">Select at least one task to begin</p>
         )}
       </div>
