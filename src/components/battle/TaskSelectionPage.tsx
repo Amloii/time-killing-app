@@ -2,7 +2,8 @@ import React from 'react';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useAppStore } from '../../store';
 import TaskList from '../tasks/TaskList';
-import Button from '../common/Button';
+import Button from '../common/Button'; 
+import { useNavigateToTab } from '../../hooks/useNavigateToTab';
 
 interface TaskSelectionPageProps {
   selectedTaskIds: string[];
@@ -16,6 +17,7 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   onBack,
 }) => {
   const { tasks } = useAppStore();
+  const navigateToTab = useNavigateToTab();
   const availableTasks = tasks.filter(task => !task.completed && !selectedTaskIds.includes(task.id));
 
   return (
@@ -42,7 +44,7 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
             <Button
               variant="secondary"
               icon={<Plus className="w-5 h-5" />}
-              onClick={() => window.location.hash = 'tasks'}
+              onClick={() => navigateToTab('tasks')}
             >
               Create New Task
             </Button>

@@ -10,8 +10,8 @@ import { Settings as SettingsIcon, Plus, List } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { tasks, battleActive } = useAppStore();
+  const { activeTab, setActiveTab } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
-  const [activeTab, setActiveTab] = useState<'tasks' | 'battle'>('battle');
   
   const uncompletedTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);

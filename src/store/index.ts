@@ -7,6 +7,7 @@ interface AppState {
   currentSession: BattleSession | null;
   settings: AppSettings;
   battleActive: boolean;
+  activeTab: 'tasks' | 'battle';
   currentTaskIndex: number;
   timeRemaining: number;
   
@@ -24,6 +25,9 @@ interface AppState {
   
   // Settings actions
   updateSettings: (settings: Partial<AppSettings>) => void;
+  
+  // Navigation actions
+  setActiveTab: (tab: 'tasks' | 'battle') => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -31,6 +35,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentSession: null,
   settings: getSettings(),
   battleActive: false,
+  activeTab: 'battle',
   currentTaskIndex: 0,
   timeRemaining: 0,
   
@@ -176,5 +181,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       saveSettings(updatedSettings);
       return { settings: updatedSettings };
     });
+  },
+  
+  // Navigation actions
+  setActiveTab: (tab) => {
+    set({ activeTab: tab });
   },
 }));
