@@ -10,6 +10,7 @@ const BattlePreparation: React.FC = () => {
   const { tasks, settings, createSession, startBattle } = useAppStore();
   
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   
@@ -20,10 +21,15 @@ const BattlePreparation: React.FC = () => {
   const selectedTasks = selectedTaskIds
     .map(id => tasks.find(task => task.id === id))
     .filter((task): task is NonNullable<typeof task> => task !== undefined);
+    
+  const selectedSubtasks = tasks
+    .flatMap(task => task.subTasks || [])
+    .filter(subtask => selectedSubtaskIds.includes(subtask.id));
   
   // Calculate estimated total time
-  const totalEstimatedTime = selectedTasks.reduce((total, task) => 
-    total + (task.estimatedTime || 0), 0
+  const totalEstimatedTime = selectedSubtasks.length > 0
+    ? selectedSubtasks.reduce((total, subtask) => total + subtask.estimatedTime, 0)
+    : selectedTasks.reduce((total, task) => total + (task.estimatedTime || 0), 0
   );
   
   // Handle duration change
@@ -32,8 +38,26 @@ const BattlePreparation: React.FC = () => {
     setDuration(newDuration);
   };
   
-  const handleTaskSelect = (taskId: string) => {
-    setSelectedTaskIds(prev => [...prev, taskId]);
+  const handleTaskSelect = (taskId: string, subtaskIds?: string[]) => {
+    if (subtaskIds) {
+      // Handle subtask selection/deselection
+      setSelectedSubtaskIds(prev => {
+        const isDeselecting = subtaskIds.every(id => prev.includes(id));
+        return isDeselecting
+          ? prev.filter(id => !subtaskIds.includes(id))
+          : [...prev, ...subtaskIds];
+      });
+    } else {
+      // Handle full task selection
+      setSelectedTaskIds(prev => [...prev, taskId]);
+      // Clear any selected subtasks for this task
+      const task = tasks.find(t => t.id === taskId);
+      if (task?.subTasks) {
+        setSelectedSubtaskIds(prev => 
+          prev.filter(id => !task.subTasks?.some(st => st.id === id))
+        );
+      }
+    }
     setShowTaskSelection(false);
   };
 
@@ -58,6 +82,7 @@ const BattlePreparation: React.FC = () => {
     return (
       <TaskSelectionPage
         selectedTaskIds={selectedTaskIds}
+        selectedSubtaskIds={selectedSubtaskIds}
         onTaskSelect={handleTaskSelect}
         onBack={() => setShowTaskSelection(false)}
       />
@@ -110,7 +135,9 @@ const BattlePreparation: React.FC = () => {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Selected Tasks:</span>
-                  <span className="font-bold">{selectedTasks.length}</span>
+                  <span className="font-bold">
+                    {selectedSubtasks.length || selectedTasks.length}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-gray-600">Estimated Time:</span>
