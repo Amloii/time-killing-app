@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Task, BattleSession, AppSettings, SubTask } from '../types';
 import { getTasks, saveTasks, getSessions, saveSessions, getSettings, saveSettings } from '../utils/localStorage';
+import { CapacitorService } from '../utils/capacitor';
 
 interface AppState {
   tasks: Task[];
@@ -10,6 +11,7 @@ interface AppState {
   activeTab: 'tasks' | 'battle';
   currentTaskIndex: number;
   timeRemaining: number;
+  isLoading: boolean;
   
   // Task actions
   addTask: (task: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void;
@@ -31,19 +33,48 @@ interface AppState {
   
   // Task Chop actions
   addSubTasks: (parentTaskId: string, subTasks: Omit<SubTask, 'id'>[]) => void;
+  
+  // Initialize data
+  initializeData: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  tasks: getTasks(),
+  tasks: [],
   currentSession: null,
-  settings: getSettings(),
+  settings: {
+    defaultSessionDuration: 20,
+    soundEnabled: true,
+    showAnimations: true,
+    theme: 'light',
+    defaultTags: ['Work', 'Personal', 'Urgent', 'Important'],
+    keyboardShortcutsEnabled: true,
+    geminiApiKey: '',
+  },
   battleActive: false,
   activeTab: 'battle',
   currentTaskIndex: 0,
   timeRemaining: 0,
+  isLoading: true,
+  
+  // Initialize data
+  initializeData: async () => {
+    try {
+      const [tasks, settings] = await Promise.all([
+        getTasks(),
+        getSettings()
+      ]);
+      
+      set({ tasks, settings, isLoading: false });
+    } catch (error) {
+      console.error('Error initializing data:', error);
+      set({ isLoading: false });
+    }
+  },
   
   // Task actions
-  addTask: (task) => {
+  addTask: async (task) => {
+    await CapacitorService.hapticFeedback();
+    
     const newTask: Task = {
       id: Date.now().toString(),
       completed: false,
@@ -52,45 +83,49 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...task,
     };
     
-    set((state) => {
+    set(async (state) => {
       const updatedTasks = [...state.tasks, newTask];
-      saveTasks(updatedTasks);
+      await saveTasks(updatedTasks);
       return { tasks: updatedTasks };
     });
   },
   
-  updateTask: (taskId, updates) => {
-    set((state) => {
+  updateTask: async (taskId, updates) => {
+    set(async (state) => {
       const updatedTasks = state.tasks.map((task) => 
         task.id === taskId ? { ...task, ...updates } : task
       );
-      saveTasks(updatedTasks);
+      await saveTasks(updatedTasks);
       return { tasks: updatedTasks };
     });
   },
   
-  completeTask: (taskId) => {
-    set((state) => {
+  completeTask: async (taskId) => {
+    await CapacitorService.hapticFeedback();
+    
+    set(async (state) => {
       const updatedTasks = state.tasks.map((task) => 
         task.id === taskId 
           ? { ...task, completed: true, completedAt: new Date().toISOString() } 
           : task
       );
-      saveTasks(updatedTasks);
+      await saveTasks(updatedTasks);
       return { tasks: updatedTasks };
     });
   },
   
-  deleteTask: (taskId) => {
-    set((state) => {
+  deleteTask: async (taskId) => {
+    await CapacitorService.hapticFeedback();
+    
+    set(async (state) => {
       const updatedTasks = state.tasks.filter((task) => task.id !== taskId);
-      saveTasks(updatedTasks);
+      await saveTasks(updatedTasks);
       return { tasks: updatedTasks };
     });
   },
   
   // Session actions
-  createSession: (duration, taskIds) => {
+  createSession: async (duration, taskIds) => {
     const newSession: BattleSession = {
       id: Date.now().toString(),
       duration,
@@ -98,10 +133,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       completed: false,
     };
     
-    set(() => {
-      const sessions = getSessions();
+    set(async () => {
+      const sessions = await getSessions();
       const updatedSessions = [...sessions, newSession];
-      saveSessions(updatedSessions);
+      await saveSessions(updatedSessions);
       return { 
         currentSession: newSession,
         timeRemaining: duration * 60, // Convert minutes to seconds
@@ -109,8 +144,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
   
-  startBattle: () => {
-    set((state) => {
+  startBattle: async () => {
+    await CapacitorService.hapticFeedback();
+    
+    set(async (state) => {
       if (!state.currentSession) return state;
       
       const updatedSession = {
@@ -118,12 +155,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         startTime: new Date().toISOString(),
       };
       
-      const sessions = getSessions();
+      const sessions = await getSessions();
       const updatedSessions = sessions.map((session) => 
         session.id === updatedSession.id ? updatedSession : session
       );
       
-      saveSessions(updatedSessions);
+      await saveSessions(updatedSessions);
       
       return {
         currentSession: updatedSession,
@@ -133,8 +170,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
   
-  endBattle: (completed) => {
-    set((state) => {
+  endBattle: async (completed) => {
+    await CapacitorService.hapticFeedback();
+    
+    set(async (state) => {
       if (!state.currentSession) return state;
       
       const updatedSession = {
@@ -143,12 +182,12 @@ export const useAppStore = create<AppState>((set, get) => ({
         completed,
       };
       
-      const sessions = getSessions();
+      const sessions = await getSessions();
       const updatedSessions = sessions.map((session) => 
         session.id === updatedSession.id ? updatedSession : session
       );
       
-      saveSessions(updatedSessions);
+      await saveSessions(updatedSessions);
       
       return {
         currentSession: null,
@@ -179,10 +218,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   
   // Settings actions
-  updateSettings: (newSettings) => {
-    set((state) => {
+  updateSettings: async (newSettings) => {
+    set(async (state) => {
       const updatedSettings = { ...state.settings, ...newSettings };
-      saveSettings(updatedSettings);
+      await saveSettings(updatedSettings);
       return { settings: updatedSettings };
     });
   },
@@ -193,8 +232,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   
   // Task Chop actions
-  addSubTasks: (parentTaskId, subTasks) => {
-    set((state) => {
+  addSubTasks: async (parentTaskId, subTasks) => {
+    set(async (state) => {
       const updatedTasks = state.tasks.map((task) => {
         if (task.id === parentTaskId) {
           const newSubTasks = subTasks.map((subTask) => ({
@@ -211,7 +250,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         return task;
       });
       
-      saveTasks(updatedTasks);
+      await saveTasks(updatedTasks);
       return { tasks: updatedTasks };
     });
   },
