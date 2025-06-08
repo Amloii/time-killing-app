@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CapacitorService } from '../../utils/capacitor';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -23,13 +22,6 @@ const Button: React.FC<ButtonProps> = ({
   type = 'button',
   icon,
 }) => {
-  const handleClick = async () => {
-    if (onClick && !disabled) {
-      await CapacitorService.hapticFeedback();
-      onClick();
-    }
-  };
-
   const baseClasses = 'font-medium rounded-md flex items-center justify-center transition-all active:scale-95 touch-none';
   
   const variantClasses = {
@@ -50,7 +42,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <motion.button
       type={type}
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled}
       whileTap={{ scale: disabled ? 1 : 0.95 }}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${widthClass} ${disabledClass}`}
