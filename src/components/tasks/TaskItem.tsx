@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Draggable } from 'react-beautiful-dnd';
-import { Check, Trash, Clock, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Check, Trash, Clock, Star, ChevronDown, ChevronUp, Scissors } from 'lucide-react';
 import { Task } from '../../types';
 import { useAppStore } from '../../store';
 
@@ -10,9 +10,10 @@ interface TaskItemProps {
   task: Task;
   index: number;
   isDraggable?: boolean;
+  onChopTask?: (task: Task) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask }) => {
   const { completeTask, deleteTask } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
   
@@ -93,6 +94,17 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true }) 
         </div>
         
         <div className="flex space-x-2">
+          {onChopTask && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="p-1 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200"
+              onClick={() => onChopTask(task)}
+              title="Chop into smaller tasks"
+            >
+              <Scissors className="w-5 h-5" />
+            </motion.button>
+          )}
+          
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="p-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200"

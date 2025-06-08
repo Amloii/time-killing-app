@@ -8,6 +8,7 @@ export interface Task {
   createdAt: string;
   completedAt?: string;
   tags?: string[];
+  subTasks?: SubTask[];
 }
 
 export interface BattleSession {

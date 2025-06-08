@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useAppStore } from '../store';
 import TaskList from '../components/tasks/TaskList';
 import CreateTaskForm from '../components/tasks/CreateTaskForm';
+import TaskChopModal from '../components/tasks/TaskChopModal';
 import { useNavigate } from 'react-router-dom';
 import BattlePreparation from '../components/battle/BattlePreparation';
 import TaskChopTable from '../components/tasks/TaskChopTable';
@@ -10,16 +11,39 @@ import ActiveBattle from '../components/battle/ActiveBattle';
 import SettingsPanel from '../components/settings/SettingsPanel';
 import Button from '../components/common/Button';
 import { Settings as SettingsIcon, Plus, List, Scissors } from 'lucide-react';
+import { Task, SubTask } from '../types';
+import { toast } from 'sonner';
 
 const Dashboard: React.FC = () => {
-  const { tasks, battleActive } = useAppStore();
+  const { tasks, battleActive, updateTask } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
+  const [chopTask, setChopTask] = useState<Task | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
   
   const uncompletedTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
+  
+  const handleChopTask = (task: Task) => {
+    setChopTask(task);
+  };
+  
+  const handleSaveSubtasks = (subTasks: Omit<SubTask, 'id'>[]) => {
+    if (!chopTask) return;
+    
+    const newSubTasks = subTasks.map(st => ({
+      ...st,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+    }));
+    
+    updateTask(chopTask.id, {
+      subTasks: [...(chopTask.subTasks || []), ...newSubTasks]
+    });
+    
+    toast.success(`Added ${subTasks.length} subtasks to "${chopTask.title}"`);
+    setChopTask(null);
+  };
   
   if (battleActive) {
     return <ActiveBattle />;
@@ -61,6 +85,7 @@ const Dashboard: React.FC = () => {
                   droppableId="dashboard-tasks"
                   emptyMessage="No tasks. Create one to get started!"
                   isDraggable={false}
+                  onChopTask={handleChopTask}
                 />
               </div>
             </div>
@@ -97,6 +122,14 @@ const Dashboard: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <SettingsPanel onClose={() => setShowSettings(false)} />
         </div>
+      )}
+      
+      {chopTask && (
+        <TaskChopModal
+          task={chopTask}
+          onClose={() => setChopTask(null)}
+          onSave={handleSaveSubtasks}
+        />
       )}
     </div>
   );
