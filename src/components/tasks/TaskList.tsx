@@ -11,6 +11,7 @@ interface TaskListProps {
   isDraggable?: boolean;
   onTaskClick?: (taskId: string) => void;
   onChopTask?: (task: Task) => void;
+  onTaskComplete?: (taskId: string) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -21,6 +22,7 @@ const TaskList: React.FC<TaskListProps> = ({
   isDraggable = true,
   onTaskClick,
   onChopTask,
+  onTaskComplete,
 }) => {
   // If tasks is empty, display empty message
   if (tasks.length === 0) {
@@ -47,6 +49,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 index={index}
                 isDraggable={false}
                 onChopTask={onChopTask}
+                onTaskComplete={onTaskComplete}
               />
             </div>
           );
@@ -70,6 +73,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 task={task} 
                 index={index} 
                 onChopTask={onChopTask}
+                onTaskComplete={onTaskComplete}
               />
             ))}
             {provided.placeholder}

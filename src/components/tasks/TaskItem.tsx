@@ -12,16 +12,20 @@ interface TaskItemProps {
   index: number;
   isDraggable?: boolean;
   onChopTask?: (task: Task) => void;
+  onTaskComplete?: (taskId: string) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask }) => {
-  const { completeTask, deleteTask, awardPoints } = useAppStore();
+const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask, onTaskComplete }) => {
+  const { completeTask, deleteTask } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
   const pointsRange = getPointsForTimeRange(task.estimatedTime || 30);
   
   const handleCompleteTask = () => {
-    const { pointsBreakdown } = awardPoints(task.id);
-    completeTask(task.id);
+    if (onTaskComplete) {
+      onTaskComplete(task.id);
+    } else {
+      completeTask(task.id);
+    }
   };
   
   // Render difficulty stars

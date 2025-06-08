@@ -12,18 +12,28 @@ import { Settings as SettingsIcon } from 'lucide-react';
 import { Task, SubTask } from '../types';
 import { toast } from 'sonner';
 import PointsEarnedNotification from '../components/common/PointsEarnedNotification';
+import { PointsBreakdown } from '../utils/pointsCalculator';
 
 const Dashboard: React.FC = () => {
-  const { tasks, battleActive, updateTask } = useAppStore();
+  const { tasks, battleActive, updateTask, awardPoints, completeTask } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
   const [chopTask, setChopTask] = useState<Task | null>(null);
-  const [pointsNotification, setPointsNotification] = useState<any>(null);
+  const [pointsNotification, setPointsNotification] = useState<PointsBreakdown | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
   
   const uncompletedTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
+  
+  const handleTaskComplete = (taskId: string) => {
+    const result = awardPoints(taskId);
+    completeTask(taskId);
+    
+    if (result.pointsBreakdown) {
+      setPointsNotification(result.pointsBreakdown);
+    }
+  };
   
   const handleChopTask = (task: Task) => {
     setChopTask(task);
@@ -80,6 +90,7 @@ const Dashboard: React.FC = () => {
                   emptyMessage="No tasks. Create one to get started!"
                   isDraggable={false}
                   onChopTask={handleChopTask}
+                  onTaskComplete={handleTaskComplete}
                 />
               </div>
             </div>
