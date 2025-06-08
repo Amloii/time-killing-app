@@ -83,12 +83,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   
   completeTask: (taskId) => {
     set((state) => {
-      // Award points for task completion
-      const task = state.tasks.find(t => t.id === taskId);
-      if (!task) return state;
-      
-      const { pointsBreakdown } = get().awardPoints(taskId);
-      
       const updatedTasks = state.tasks.map((task) => 
         task.id === taskId 
           ? { ...task, completed: true, completedAt: new Date().toISOString() } 

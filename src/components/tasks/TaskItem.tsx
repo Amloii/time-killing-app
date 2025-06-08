@@ -15,9 +15,14 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask }) => {
-  const { completeTask, deleteTask } = useAppStore();
+  const { completeTask, deleteTask, awardPoints } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
   const pointsRange = getPointsForTimeRange(task.estimatedTime || 30);
+  
+  const handleCompleteTask = () => {
+    const { pointsBreakdown } = awardPoints(task.id);
+    completeTask(task.id);
+  };
   
   // Render difficulty stars
   const renderDifficulty = () => (
@@ -113,7 +118,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, on
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="p-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200"
-            onClick={() => completeTask(task.id)}
+            onClick={handleCompleteTask}
           >
             <Check className="w-5 h-5" />
           </motion.button>
