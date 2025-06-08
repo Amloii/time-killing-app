@@ -6,11 +6,9 @@ import CreateTaskForm from '../components/tasks/CreateTaskForm';
 import TaskChopModal from '../components/tasks/TaskChopModal';
 import { useNavigate } from 'react-router-dom';
 import BattlePreparation from '../components/battle/BattlePreparation';
-import TaskChopTable from '../components/tasks/TaskChopTable';
 import ActiveBattle from '../components/battle/ActiveBattle';
 import SettingsPanel from '../components/settings/SettingsPanel';
-import Button from '../components/common/Button';
-import { Settings as SettingsIcon, Plus, List, Scissors } from 'lucide-react';
+import { Settings as SettingsIcon } from 'lucide-react';
 import { Task, SubTask } from '../types';
 import { toast } from 'sonner';
 
@@ -65,9 +63,7 @@ const Dashboard: React.FC = () => {
       </header>
       
       <div className="max-w-4xl mx-auto">
-        {activeTab === 'chop' ? (
-          <TaskChopTable />
-        ) : activeTab === 'battle' ? (
+        {activeTab === 'battle' ? (
           <BattlePreparation />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">

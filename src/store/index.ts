@@ -7,7 +7,7 @@ interface AppState {
   currentSession: BattleSession | null;
   settings: AppSettings;
   battleActive: boolean;
-  activeTab: 'tasks' | 'battle' | 'chop';
+  activeTab: 'tasks' | 'battle';
   currentTaskIndex: number;
   timeRemaining: number;
   
@@ -27,7 +27,7 @@ interface AppState {
   updateSettings: (settings: Partial<AppSettings>) => void;
   
   // Navigation actions
-  setActiveTab: (tab: 'tasks' | 'battle' | 'chop') => void;
+  setActiveTab: (tab: 'tasks' | 'battle') => void;
   
   // Task Chop actions
   addSubTasks: (parentTaskId: string, subTasks: Omit<SubTask, 'id'>[]) => void;
