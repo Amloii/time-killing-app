@@ -11,11 +11,13 @@ import SettingsPanel from '../components/settings/SettingsPanel';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { Task, SubTask } from '../types';
 import { toast } from 'sonner';
+import PointsEarnedNotification from '../components/common/PointsEarnedNotification';
 
 const Dashboard: React.FC = () => {
   const { tasks, battleActive, updateTask } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
   const [chopTask, setChopTask] = useState<Task | null>(null);
+  const [pointsNotification, setPointsNotification] = useState<any>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
@@ -49,18 +51,14 @@ const Dashboard: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-sakura p-2 sm:p-4">
-      <header className="max-w-4xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-3xl sm:text-4xl font-bold japanese-brush text-red-600 tracking-wide">
-          Fight Mode
-        </h1>
-        
+      <div className="max-w-4xl mx-auto flex justify-end items-center mb-6 pt-4">
         <button
           onClick={() => setShowSettings(true)}
           className="p-2 rounded-full hover:bg-red-50 text-red-600 transition-colors"
         >
           <SettingsIcon className="w-6 h-6" />
         </button>
-      </header>
+      </div>
       
       <div className="max-w-4xl mx-auto">
         {activeTab === 'battle' ? (
@@ -127,6 +125,11 @@ const Dashboard: React.FC = () => {
           onSave={handleSaveSubtasks}
         />
       )}
+      
+      <PointsEarnedNotification
+        pointsBreakdown={pointsNotification}
+        onClose={() => setPointsNotification(null)}
+      />
     </div>
   );
 };

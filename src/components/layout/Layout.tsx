@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, BarChart2, List, Scissors } from 'lucide-react';
+import { Home, BarChart2, List, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
+import PointsDisplay from '../common/PointsDisplay';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,11 +14,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navItems = [
     { path: '/dashboard/battle', icon: Home, label: 'Battle' },
     { path: '/dashboard/tasks', icon: List, label: 'Tasks' },
+    { path: '/rewards', icon: Trophy, label: 'Rewards' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
 
   return (
     <div className="flex flex-col min-h-screen">
+      <header className="bg-white bg-opacity-90 backdrop-blur-lg border-b border-gray-200 p-4 safe-area-inset">
+        <div className="max-w-xl mx-auto flex justify-between items-center">
+          <h1 className="text-xl font-bold japanese-brush text-red-600">Fight Mode</h1>
+          <PointsDisplay showProgress={false} size="sm" />
+        </div>
+      </header>
+      
       <main className="flex-1 pb-16">{children}</main>
       
       <nav className="fixed bottom-0 left-0 right-0 bg-white bg-opacity-90 backdrop-blur-lg border-t border-gray-200 safe-area-inset">

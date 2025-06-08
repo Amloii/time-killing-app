@@ -41,3 +41,36 @@ export interface SubTask {
   type: TaskType;
   parentTaskId?: string;
 }
+
+export interface UserProfile {
+  id: string;
+  points: number;
+  level: number;
+  streak: number;
+  lastCompletionDate?: string;
+  totalTasksCompleted: number;
+  ownedWarriors: string[];
+  activeWarrior?: string;
+}
+
+export type WarriorRarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';
+
+export interface Warrior {
+  id: string;
+  name: string;
+  rarity: WarriorRarity;
+  cost: number;
+  description: string;
+  imageUrl: string;
+  animationUrl: string;
+  unlocked: boolean;
+}
+
+export interface PointTransaction {
+  id: string;
+  type: 'earned' | 'spent';
+  amount: number;
+  reason: string;
+  taskId?: string;
+  timestamp: string;
+}

@@ -5,6 +5,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { Check, Trash, Clock, Star, ChevronDown, ChevronUp, Scissors } from 'lucide-react';
 import { Task } from '../../types';
 import { useAppStore } from '../../store';
+import { getPointsForTimeRange } from '../../utils/pointsCalculator';
 
 interface TaskItemProps {
   task: Task;
@@ -16,6 +17,7 @@ interface TaskItemProps {
 const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask }) => {
   const { completeTask, deleteTask } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
+  const pointsRange = getPointsForTimeRange(task.estimatedTime || 30);
   
   // Render difficulty stars
   const renderDifficulty = () => (
@@ -77,6 +79,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, on
             <div className="flex items-center">
               <span className="text-sm text-gray-500 mr-1">Difficulty:</span>
               {renderDifficulty()}
+            </div>
+            <div className="flex items-center text-sm text-green-600 font-medium">
+              <span>💰 {pointsRange.min}-{pointsRange.max} pts</span>
             </div>
             {task.tags && task.tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
