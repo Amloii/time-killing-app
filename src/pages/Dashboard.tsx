@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store';
 import TaskList from '../components/tasks/TaskList';
 import CreateTaskForm from '../components/tasks/CreateTaskForm';
 import TaskChopModal from '../components/tasks/TaskChopModal';
-import { useNavigate } from 'react-router-dom';
 import BattlePreparation from '../components/battle/BattlePreparation';
 import ActiveBattle from '../components/battle/ActiveBattle';
 import SettingsPanel from '../components/settings/SettingsPanel';
@@ -13,6 +12,7 @@ import { Task, SubTask } from '../types';
 import { toast } from 'sonner';
 import PointsEarnedNotification from '../components/common/PointsEarnedNotification';
 import { PointsBreakdown } from '../utils/pointsCalculator';
+import Button from '../components/common/Button';
 
 const Dashboard: React.FC = () => {
   const { tasks, battleActive, updateTask, awardPoints, completeTask, setActiveTab } = useAppStore();

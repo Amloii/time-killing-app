@@ -5,10 +5,9 @@ import { useAppStore } from '../../store';
 import SamuraiMascot from '../common/SamuraiMascot';
 import TaskSelectionPage from './TaskSelectionPage';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { useNavigate } from 'react-router-dom';
 
 const BattlePreparation: React.FC = () => {
-  const { tasks, settings, createSession, startBattle } = useAppStore();
+  const { tasks, settings, createSession, startBattle, setActiveTab } = useAppStore();
   
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
@@ -121,6 +120,10 @@ const BattlePreparation: React.FC = () => {
     setShowTaskSelection(false);
   };
 
+  const handleGoToTasks = () => {
+    setActiveTab('tasks');
+    window.history.pushState(null, '', '/dashboard/tasks');
+  };
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -234,7 +237,7 @@ const BattlePreparation: React.FC = () => {
             <div className="text-center py-8">
               <p className="text-gray-500">No tasks selected for this battle</p>
               <Button
-                onClick={() => navigate('/dashboard/tasks')}
+                onClick={handleGoToTasks}
                 icon={<Plus className="w-5 h-5" />}
                 className="mt-4"
               >
@@ -371,7 +374,7 @@ const BattlePreparation: React.FC = () => {
                 </div>
               )}
               <Button
-                onClick={() => navigate('/dashboard/tasks')}
+                onClick={handleGoToTasks}
                 variant="secondary"
                 fullWidth
                 icon={<Plus className="w-5 h-5" />}

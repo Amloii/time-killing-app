@@ -14,6 +14,8 @@ interface TaskItemProps {
   onChopTask?: (task: Task) => void;
   onTaskComplete?: (taskId: string) => void;
   allowCompletion?: boolean;
+  showAddToBattle?: boolean;
+  onAddToBattle?: (taskId: string) => void;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ 
@@ -22,7 +24,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
   isDraggable = true, 
   onChopTask, 
   onTaskComplete,
-  allowCompletion = false 
+  allowCompletion = false,
+  showAddToBattle = false,
+  onAddToBattle
 }) => {
   const { completeTask, deleteTask } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
@@ -118,6 +122,17 @@ const TaskItem: React.FC<TaskItemProps> = ({
         </div>
         
         <div className="flex space-x-2">
+          {showAddToBattle && onAddToBattle && (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="p-1 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
+              onClick={() => onAddToBattle(task.id)}
+              title="Add to battle"
+            >
+              <Swords className="w-5 h-5" />
+            </motion.button>
+          )}
+          
           {onChopTask && (
             <motion.button
               whileTap={{ scale: 0.9 }}
