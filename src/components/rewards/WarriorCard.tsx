@@ -54,14 +54,20 @@ const WarriorCard: React.FC<WarriorCardProps> = ({
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
+            style={{ imageRendering: 'pixelated' }}
             onLoad={() => setImageLoaded(true)}
             onError={handleImageError}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-2 bg-gray-400 rounded-full flex items-center justify-center">
-                <span className="text-2xl">⚔️</span>
+              <div className="w-16 h-16 mx-auto mb-2 overflow-hidden rounded-full border-2 border-gray-400">
+                <img
+                  src="/0609.gif"
+                  alt="Default Warrior"
+                  className="w-full h-full object-cover"
+                  style={{ imageRendering: 'pixelated' }}
+                />
               </div>
               <span className="text-gray-600 text-sm">{warrior.name}</span>
             </div>

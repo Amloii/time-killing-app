@@ -8,8 +8,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 100,
     description: 'A young warrior beginning their journey',
-    imageUrl: 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -18,8 +18,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 150,
     description: 'Protector of the ancient woods',
-    imageUrl: 'https://images.pexels.com/photos/8728380/pexels-photo-8728380.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728380/pexels-photo-8728380.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -28,8 +28,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 200,
     description: 'Wise warrior from the high peaks',
-    imageUrl: 'https://images.pexels.com/photos/8349833/pexels-photo-8349833.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8349833/pexels-photo-8349833.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   
@@ -40,8 +40,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 250,
     description: 'Master of lightning-fast strikes',
-    imageUrl: 'https://images.pexels.com/photos/7991448/pexels-photo-7991448.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/7991448/pexels-photo-7991448.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -50,8 +50,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 350,
     description: 'Silent warrior of the night',
-    imageUrl: 'https://images.pexels.com/photos/8728142/pexels-photo-8728142.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728142/pexels-photo-8728142.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -60,8 +60,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 400,
     description: 'Wandering warrior with burning spirit',
-    imageUrl: 'https://images.pexels.com/photos/8728381/pexels-photo-8728381.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728381/pexels-photo-8728381.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   
@@ -72,8 +72,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 500,
     description: 'Legendary hunter of ancient beasts',
-    imageUrl: 'https://images.pexels.com/photos/8728143/pexels-photo-8728143.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728143/pexels-photo-8728143.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -82,8 +82,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 650,
     description: 'Champion blessed by the heavens',
-    imageUrl: 'https://images.pexels.com/photos/8728144/pexels-photo-8728144.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728144/pexels-photo-8728144.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -92,8 +92,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 700,
     description: 'Controller of dark energies',
-    imageUrl: 'https://images.pexels.com/photos/8728145/pexels-photo-8728145.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728145/pexels-photo-8728145.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   
@@ -104,8 +104,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 800,
     description: 'Ultimate ruler of all warriors',
-    imageUrl: 'https://images.pexels.com/photos/8728146/pexels-photo-8728146.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728146/pexels-photo-8728146.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   },
   {
@@ -114,8 +114,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 1000,
     description: 'Immortal warrior reborn from flames',
-    imageUrl: 'https://images.pexels.com/photos/8728147/pexels-photo-8728147.jpeg?auto=compress&cs=tinysrgb&w=400',
-    animationUrl: 'https://images.pexels.com/photos/8728147/pexels-photo-8728147.jpeg?auto=compress&cs=tinysrgb&w=400',
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
     unlocked: false
   }
 ];
