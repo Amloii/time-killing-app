@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Plus, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { useAppStore } from '../../store';
 import Button from '../common/Button'; 
+import TaskFilters from './TaskFilters';
 import { useNavigateToTab } from '../../hooks/useNavigateToTab';
 import { Task } from '../../types';
 
@@ -23,15 +24,55 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedTasks, setExpandedTasks] = React.useState<string[]>([]);
   const [hoveredTaskId, setHoveredTaskId] = React.useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    duration: 'all' as 'all' | 'short' | 'medium' | 'long',
+    difficulty: 'all' as 'all' | '1' | '2' | '3' | '4' | '5',
+    category: 'all' as 'all' | string,
+  });
   
-  const availableTasks = tasks.filter(task => 
-    !task.completed && 
-    !selectedTaskIds.includes(task.id) &&
-    (searchQuery
-      ? task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        task.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      : true)
-  );
+  // Get available categories from task tags
+  const availableCategories = React.useMemo(() => {
+    const categories = new Set<string>();
+    tasks.forEach(task => {
+      task.tags?.forEach(tag => categories.add(tag));
+    });
+    return Array.from(categories);
+  }, [tasks]);
+  
+  const availableTasks = React.useMemo(() => {
+    return tasks.filter(task => {
+      if (task.completed || selectedTaskIds.includes(task.id)) return false;
+      
+      // Search filter
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        if (!task.title.toLowerCase().includes(searchLower) &&
+            !task.description?.toLowerCase().includes(searchLower)) {
+          return false;
+        }
+      }
+      
+      // Duration filter
+      if (filters.duration !== 'all') {
+        const time = task.estimatedTime || 30;
+        if (filters.duration === 'short' && time > 25) return false;
+        if (filters.duration === 'medium' && (time <= 25 || time > 60)) return false;
+        if (filters.duration === 'long' && time <= 60) return false;
+      }
+      
+      // Difficulty filter
+      if (filters.difficulty !== 'all') {
+        if (task.difficulty !== parseInt(filters.difficulty)) return false;
+      }
+      
+      // Category filter
+      if (filters.category !== 'all') {
+        if (!task.tags?.includes(filters.category)) return false;
+      }
+      
+      return true;
+    });
+  }, [tasks, selectedTaskIds, searchQuery, filters]);
 
   // Handle keyboard shortcuts
   React.useEffect(() => {
@@ -239,6 +280,12 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
         </div>
       </div>
 
+      <TaskFilters
+        filters={filters}
+        onFilterChange={setFilters}
+        availableCategories={availableCategories}
+      />
+
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
         {availableTasks.length > 0 && (
           <div className="flex justify-between mb-4">
@@ -288,6 +335,25 @@ const TaskSelectionPage: React.FC<TaskSelectionPageProps> = ({
           </div>
         ) : (
           <div>{availableTasks.map(renderTask)}</div>
+        )}
+        
+        {availableTasks.length === 0 && searchQuery && (
+          <div className="text-center py-8">
+            <p className="text-gray-500 mb-4">No tasks match your search and filters</p>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setSearchQuery('');
+                setFilters({
+                  duration: 'all',
+                  difficulty: 'all',
+                  category: 'all'
+                });
+              }}
+            >
+              Clear Search & Filters
+            </Button>
+          </div>
         )}
       </div>
     </div>

@@ -1,25 +1,39 @@
 import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useAppStore } from '../../store';
 import BattleTimer from './BattleTimer';
+import TaskBreakdown from './TaskBreakdown';
+import TaskVerification from './TaskVerification';
+import BattleProgress from './BattleProgress';
 import Button from '../common/Button';
 import SamuraiMascot from '../common/SamuraiMascot';
+import { toast } from 'sonner';
 
 const ActiveBattle: React.FC = () => {
   const { 
     tasks, 
     currentSession, 
     currentTaskIndex, 
-    completeTask, 
+    completeTask,
+    awardPoints,
     nextTask, 
-    endBattle 
+    endBattle,
+    userProfile
   } = useAppStore();
+  
+  const [showVerification, setShowVerification] = useState(false);
+  const [taskToVerify, setTaskToVerify] = useState<string | null>(null);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [pointsEarned, setPointsEarned] = useState(0);
+  const [battleStartTime] = useState(Date.now());
   
   if (!currentSession) return null;
   
   const currentTaskId = currentSession.taskIds[currentTaskIndex];
   const currentTask = tasks.find(task => task.id === currentTaskId);
+  const timeElapsed = Math.floor((Date.now() - battleStartTime) / 1000);
   
   if (!currentTask) {
     return (
@@ -32,80 +46,136 @@ const ActiveBattle: React.FC = () => {
     );
   }
   
-  const handleCompleteTask = () => {
-    completeTask(currentTask.id);
-    nextTask();
+  const handleCompleteTask = (taskId: string) => {
+    setTaskToVerify(taskId);
+    setShowVerification(true);
+  };
+  
+  const handleSubtaskComplete = (subtaskId: string) => {
+    // Award points for subtask completion
+    const result = awardPoints(subtaskId);
+    if (result.pointsBreakdown) {
+      setPointsEarned(prev => prev + result.pointsBreakdown.total);
+      toast.success(`+${result.pointsBreakdown.total} points earned!`);
+    }
+  };
+  
+  const handleTaskVerification = (taskId: string, verified: boolean, notes?: string) => {
+    setShowVerification(false);
+    setTaskToVerify(null);
+    
+    if (verified) {
+      // Award points for task completion
+      const result = awardPoints(taskId);
+      completeTask(taskId);
+      setCompletedTasks(prev => [...prev, taskId]);
+      
+      if (result.pointsBreakdown) {
+        setPointsEarned(prev => prev + result.pointsBreakdown.total);
+        toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
+      }
+      
+      // Move to next task or end battle
+      if (currentTaskIndex + 1 >= currentSession.taskIds.length) {
+        setTimeout(() => endBattle(true), 1000);
+      } else {
+        nextTask();
+      }
+    } else {
+      toast.info('Continue working on this task');
+    }
   };
   
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="p-6 max-w-2xl mx-auto"
-    >
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-2">BATTLE IN PROGRESS</h1>
-        <BattleTimer />
-      </div>
-      
-      <div className="flex justify-center mb-8">
-        <SamuraiMascot mood="focused" size={150} />
-      </div>
-      
-      <motion.div
-        key={currentTask.id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-8"
+    <div className="p-4 max-w-6xl mx-auto">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
       >
-        <h2 className="text-xl font-bold mb-2">Current Task:</h2>
-        <h3 className="text-2xl font-bold mb-4">{currentTask.title}</h3>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2 japanese-brush text-red-600">
+            BATTLE IN PROGRESS
+          </h1>
+          <BattleTimer />
+        </div>
         
-        {currentTask.description && (
-          <p className="mb-4 text-gray-600">{currentTask.description}</p>
-        )}
-        
-        <div className="flex items-center mb-4">
-          <span className="font-medium mr-2">Difficulty:</span>
-          <div className="flex">
-            {Array.from({ length: currentTask.difficulty }).map((_, i) => (
-              <span key={i} className="text-yellow-500">★</span>
-            ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Battle Progress */}
+          <div className="lg:col-span-1">
+            <BattleProgress
+              completedTasks={completedTasks}
+              totalTasks={currentSession.taskIds.length}
+              pointsEarned={pointsEarned}
+              timeElapsed={timeElapsed}
+            />
+            
+            <div className="flex justify-center mb-6">
+              <SamuraiMascot mood="focused" size={120} />
+            </div>
+          </div>
+          
+          {/* Current Task */}
+          <div className="lg:col-span-2">
+            <motion.div
+              key={currentTask.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-blue-800">
+                    Current Task ({currentTaskIndex + 1}/{currentSession.taskIds.length})
+                  </h2>
+                  <div className="flex items-center text-blue-600">
+                    <Clock className="w-4 h-4 mr-1" />
+                    <span className="text-sm">
+                      {currentTask.estimatedTime || 30} min estimated
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <TaskBreakdown
+                task={currentTask}
+                onSubtaskComplete={handleSubtaskComplete}
+                onTaskComplete={handleCompleteTask}
+              />
+            </motion.div>
+            
+            <div className="flex justify-center space-x-4">
+              <Button 
+                onClick={() => handleCompleteTask(currentTask.id)}
+                icon={<CheckCircle className="w-5 h-5" />}
+                size="lg"
+              >
+                Complete Task
+              </Button>
+              
+              <Button 
+                onClick={() => endBattle(false)}
+                variant="danger"
+                icon={<XCircle className="w-5 h-5" />}
+                size="lg"
+              >
+                End Battle
+              </Button>
+            </div>
           </div>
         </div>
         
-        {currentTask.estimatedTime && (
-          <p className="mb-4">
-            <span className="font-medium">Estimated time:</span> {currentTask.estimatedTime} minutes
-          </p>
+        {showVerification && taskToVerify && (
+          <TaskVerification
+            task={tasks.find(t => t.id === taskToVerify)!}
+            onVerify={handleTaskVerification}
+            onCancel={() => {
+              setShowVerification(false);
+              setTaskToVerify(null);
+            }}
+          />
         )}
-        
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-          <p className="text-sm text-yellow-800">
-            <strong>Battle Mode:</strong> Complete this task to earn points and advance to the next one!
-          </p>
-        </div>
       </motion.div>
-      
-      <div className="flex justify-center space-x-4">
-        <Button 
-          onClick={handleCompleteTask}
-          icon={<CheckCircle className="w-5 h-5" />}
-          size="lg"
-        >
-          Complete Task
-        </Button>
-        
-        <Button 
-          onClick={() => endBattle(false)}
-          variant="danger"
-          icon={<XCircle className="w-5 h-5" />}
-          size="lg"
-        >
-          Surrender
-        </Button>
-      </div>
-    </motion.div>
+    </div>
   );
 };
 
