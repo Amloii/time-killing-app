@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Button from '../common/Button';
+import SignUpForm from './SignUpForm';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,12 +15,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { signIn, resetPassword } = useAuth();
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -35,14 +35,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
         newErrors.password = 'Password is required';
       } else if (password.length < 6) {
         newErrors.password = 'Password must be at least 6 characters';
-      }
-
-      if (mode === 'signup') {
-        if (!confirmPassword) {
-          newErrors.confirmPassword = 'Please confirm your password';
-        } else if (password !== confirmPassword) {
-          newErrors.confirmPassword = 'Passwords do not match';
-        }
       }
     }
 
@@ -65,12 +57,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           onClose();
           resetForm();
         }
-      } else if (mode === 'signup') {
-        const { error } = await signUp(email, password);
-        if (!error) {
-          onClose();
-          resetForm();
-        }
       } else if (mode === 'reset') {
         const { error } = await resetPassword(email);
         if (!error) {
@@ -87,7 +73,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
   const resetForm = () => {
     setEmail('');
     setPassword('');
-    setConfirmPassword('');
     setErrors({});
     setShowPassword(false);
   };
@@ -98,6 +83,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
   };
 
   if (!isOpen) return null;
+
+  // Show dedicated signup form
+  if (mode === 'signup') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <SignUpForm
+          onBack={handleClose}
+          onSuccess={() => {
+            handleClose();
+          }}
+          onSwitchToSignIn={() => setMode('signin')}
+        />
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>
@@ -111,7 +111,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
               {mode === 'signin' && 'Sign In'}
-              {mode === 'signup' && 'Create Account'}
               {mode === 'reset' && 'Reset Password'}
             </h2>
             <button
@@ -172,40 +171,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               </div>
             )}
 
-            {mode === 'signup' && (
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    id="confirmPassword"
-                    type={showPassword ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Confirm your password"
-                  />
-                </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-              </div>
+          <Button
+            type="submit"
+            fullWidth
+            disabled={loading}
+            icon={<User className="w-5 h-5" />}
+          >
+            {loading ? 'Loading...' : (
+              mode === 'signin' ? 'Sign In' :
+              'Send Reset Email'
             )}
-
-            <Button
-              type="submit"
-              fullWidth
-              disabled={loading}
-              icon={<User className="w-5 h-5" />}
-            >
-              {loading ? 'Loading...' : (
-                mode === 'signin' ? 'Sign In' :
-                mode === 'signup' ? 'Create Account' :
-                'Send Reset Email'
-              )}
-            </Button>
+          </Button>
           </form>
 
           <div className="mt-6 text-center">
@@ -229,18 +205,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               </>
             )}
 
-            {mode === 'signup' && (
-              <p className="text-gray-600 text-sm">
-                Already have an account?{' '}
-                <button
-                  onClick={() => setMode('signin')}
-                  className="text-red-600 hover:text-red-700 font-medium"
-                >
-                  Sign in
-                </button>
-              </p>
-            )}
-
             {mode === 'reset' && (
               <button
                 onClick={() => setMode('signin')}
@@ -251,17 +215,30 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             )}
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-blue-800 text-sm">
-              <strong>Cloud Sync Benefits:</strong>
-            </p>
-            <ul className="text-blue-700 text-sm mt-1 space-y-1">
-              <li>• Access your tasks from any device</li>
-              <li>• Automatic backup of your progress</li>
-              <li>• Sync your points and achievements</li>
-              <li>• Keep your warrior collection safe</li>
-            </ul>
-          </div>
+          {mode === 'signin' && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <p className="text-blue-800 text-sm">
+                <strong>Cloud Sync Benefits:</strong>
+              </p>
+              <ul className="text-blue-700 text-sm mt-1 space-y-1">
+                <li>• Access your tasks from any device</li>
+                <li>• Automatic backup of your progress</li>
+                <li>• Sync your points and achievements</li>
+                <li>• Keep your warrior collection safe</li>
+              </ul>
+            </div>
+          )}
+
+          {mode === 'reset' && (
+            <div className="mt-6 p-4 bg-green-50 rounded-lg">
+              <p className="text-green-800 text-sm">
+                <strong>Password Reset:</strong>
+              </p>
+              <p className="text-green-700 text-sm mt-1">
+                Enter your email address and we'll send you a link to reset your password.
+              </p>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>
