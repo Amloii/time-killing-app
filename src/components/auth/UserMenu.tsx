@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, LogOut, Cloud, CloudOff, Settings } from 'lucide-react';
+import { User, LogOut, Cloud, CloudOff, Settings, UserPlus } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppStore } from '../../store';
+import Button from '../common/Button';
 
 interface UserMenuProps {
   onOpenSettings: () => void;
+  onOpenAuth?: (mode: 'signin' | 'signup') => void;
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ onOpenSettings }) => {
+const UserMenu: React.FC<UserMenuProps> = ({ onOpenSettings, onOpenAuth }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, isAuthenticated, signOut } = useAuth();
   const { lastSyncTime } = useAppStore();
@@ -103,12 +105,37 @@ const UserMenu: React.FC<UserMenuProps> = ({ onOpenSettings }) => {
                 </button>
               </>
             ) : (
-              <div className="px-4 py-2">
+              <div className="px-4 py-3">
                 <div className="text-sm text-gray-700 mb-2">
                   You're using Fight Mode offline
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 mb-3">
                   Sign in to sync your data across devices
+                </div>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => {
+                      onOpenAuth?.('signup');
+                      setIsOpen(false);
+                    }}
+                    size="sm"
+                    fullWidth
+                    icon={<UserPlus className="w-4 h-4" />}
+                  >
+                    Create Account
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      onOpenAuth?.('signin');
+                      setIsOpen(false);
+                    }}
+                    variant="secondary"
+                    size="sm"
+                    fullWidth
+                    icon={<User className="w-4 h-4" />}
+                  >
+                    Sign In
+                  </Button>
                 </div>
               </div>
             )}

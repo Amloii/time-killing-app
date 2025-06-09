@@ -58,7 +58,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <PointsDisplay showProgress={false} size="md" />
-            <UserMenu onOpenSettings={() => setShowSettings(true)} />
+            <UserMenu 
+              onOpenSettings={() => setShowSettings(true)}
+              onOpenAuth={handleOpenAuth}
+            />
           </div>
         </div>
       </header>
