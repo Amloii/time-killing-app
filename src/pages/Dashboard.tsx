@@ -97,16 +97,7 @@ const Dashboard: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-sakura p-2 sm:p-4">
-      <div className="max-w-4xl mx-auto flex justify-between items-center mb-6 pt-4">
-        {/* Show mascot on tasks page */}
-        {activeTab === 'tasks' && (
-          <div className="flex justify-center">
-            <SamuraiMascot mood="ready" size={100} />
-          </div>
-        )}
-        
-        <div className="flex-1"></div>
-        
+      <div className="max-w-4xl mx-auto flex justify-end items-center mb-6 pt-4">
         <button
           onClick={() => setShowSettings(true)}
           className="p-2 rounded-full hover:bg-red-50 text-red-600 transition-colors"
@@ -116,6 +107,13 @@ const Dashboard: React.FC = () => {
       </div>
       
       <div className="max-w-4xl mx-auto">
+        {/* Show centered mascot on tasks page */}
+        {activeTab === 'tasks' && (
+          <div className="flex justify-center mb-8">
+            <SamuraiMascot mood="ready" size={120} />
+          </div>
+        )}
+        
         {activeTab === 'battle' ? (
           <BattlePreparation />
         ) : (
