@@ -89,22 +89,6 @@ const Dashboard: React.FC = () => {
     setActiveTab('battle');
     navigate('/dashboard/battle');
   };
-      toast.success('Task added to battle selection!');
-      return newSelection;
-    });
-  };
-  
-  const handleGoToBattle = () => {
-    if (selectedForBattle.length === 0) {
-      toast.error('Please select at least one task for battle');
-      return;
-    }
-    
-    // Store selected tasks in localStorage temporarily
-    localStorage.setItem('pendingBattleTasks', JSON.stringify(selectedForBattle));
-    setActiveTab('battle');
-    navigate('/dashboard/battle');
-  };
   
   if (battleActive) {
     return <ActiveBattle />;
