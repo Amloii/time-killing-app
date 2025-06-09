@@ -176,12 +176,12 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onBack, onSuccess, onSwitchToSi
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="max-w-md mx-auto"
-    >
-      <div className="bg-white rounded-lg shadow-xl p-8">
+    <div className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-lg shadow-xl p-8"
+      >
         <button
           onClick={() => setStep('benefits')}
           className="flex items-center text-gray-600 hover:text-gray-800 mb-6"
@@ -311,8 +311,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onBack, onSuccess, onSwitchToSi
         <div className="mt-6 text-xs text-gray-500 text-center">
           By creating an account, you agree to our Terms of Service and Privacy Policy
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
