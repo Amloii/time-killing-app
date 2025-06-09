@@ -101,60 +101,60 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+          className="bg-white rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 mx-4 sm:mx-0 my-4"
         >
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
               {mode === 'signin' && 'Sign In'}
               {mode === 'reset' && 'Reset Password'}
             </h2>
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
+                  className={`w-full pl-9 sm:pl-10 pr-4 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm sm:text-base ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your email"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.email}</p>}
             </div>
 
             {mode !== 'reset' && (
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
+                    className={`w-full pl-9 sm:pl-10 pr-10 sm:pr-12 py-2.5 sm:py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm sm:text-base ${
                       errors.password ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="Enter your password"
@@ -162,12 +162,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </button>
                 </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                {errors.password && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.password}</p>}
               </div>
             )}
 
@@ -184,20 +184,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-4 sm:mt-6 text-center">
             {mode === 'signin' && (
               <>
                 <button
                   onClick={() => setMode('reset')}
-                  className="text-red-600 hover:text-red-700 text-sm"
+                  className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
                 >
                   Forgot your password?
                 </button>
-                <p className="text-gray-600 text-sm mt-2">
+                <p className="text-gray-600 text-xs sm:text-sm mt-2">
                   Don't have an account?{' '}
                   <button
                     onClick={() => setMode('signup')}
-                    className="text-red-600 hover:text-red-700 font-medium"
+                    className="text-red-600 hover:text-red-700 font-medium text-xs sm:text-sm"
                   >
                     Sign up
                   </button>
@@ -208,7 +208,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             {mode === 'reset' && (
               <button
                 onClick={() => setMode('signin')}
-                className="text-red-600 hover:text-red-700 text-sm"
+                className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
               >
                 Back to sign in
               </button>
@@ -216,11 +216,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           </div>
 
           {mode === 'signin' && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-blue-800 text-sm">
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-50 rounded-lg">
+              <p className="text-blue-800 text-xs sm:text-sm font-medium">
                 <strong>Cloud Sync Benefits:</strong>
               </p>
-              <ul className="text-blue-700 text-sm mt-1 space-y-1">
+              <ul className="text-blue-700 text-xs sm:text-sm mt-1 space-y-0.5 sm:space-y-1">
                 <li>• Access your tasks from any device</li>
                 <li>• Automatic backup of your progress</li>
                 <li>• Sync your points and achievements</li>
@@ -230,11 +230,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           )}
 
           {mode === 'reset' && (
-            <div className="mt-6 p-4 bg-green-50 rounded-lg">
-              <p className="text-green-800 text-sm">
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-50 rounded-lg">
+              <p className="text-green-800 text-xs sm:text-sm font-medium">
                 <strong>Password Reset:</strong>
               </p>
-              <p className="text-green-700 text-sm mt-1">
+              <p className="text-green-700 text-xs sm:text-sm mt-1 leading-relaxed">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
             </div>
