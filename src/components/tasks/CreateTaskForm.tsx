@@ -103,6 +103,12 @@ const CreateTaskForm: React.FC = () => {
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
       <h3 className="text-base sm:text-lg fight-time-heading mb-4">Create New Task</h3>
       
+      {/* Progress indicator */}
+      <div className="flex items-center justify-between mb-4 text-xs text-gray-500">
+        <span>Fill in the details below</span>
+        <span>{title ? '1' : '0'}/1 required fields</span>
+      </div>
+      
       <div className="space-y-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">

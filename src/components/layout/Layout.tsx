@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, BarChart2, List, Trophy } from 'lucide-react';
+import { Home, BarChart2, List, Trophy, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PointsDisplay from '../common/PointsDisplay';
 import UserMenu from '../auth/UserMenu';
@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [showSettings, setShowSettings] = useState(false);
   
   const navItems = [
-    { path: '/dashboard/battle', icon: Home, label: 'Battle' },
+    { path: '/dashboard/battle', icon: Zap, label: 'Battle' },
     { path: '/dashboard/tasks', icon: List, label: 'Tasks' },
     { path: '/rewards', icon: Trophy, label: 'Rewards' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
@@ -92,15 +92,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   className={`p-2 rounded-lg ${
-                    isActive ? 'text-red-600' : 'text-gray-600'
+                    isActive ? 'text-red-600 bg-red-50' : 'text-gray-600'
                   }`}
                 >
                   <Icon className="w-6 h-6" />
-                  <span className="text-xs mt-1">{label}</span>
+                  <span className="text-xs mt-1 font-medium">{label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600"
+                      className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-red-600 rounded-full"
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}

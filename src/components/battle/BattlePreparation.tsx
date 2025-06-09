@@ -170,6 +170,18 @@ const BattlePreparation: React.FC = () => {
       <div className="text-center mb-8">
         <h1 className="text-3xl fight-time-heading mb-2 text-black">Prepare for Battle</h1>
         <p className="text-gray-600 fight-time-text">Select your tasks and set your battle duration</p>
+        
+        {/* Quick Stats */}
+        <div className="flex justify-center space-x-6 mt-4 text-sm text-gray-600">
+          <div className="flex items-center">
+            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+            {tasks.filter(t => !t.completed).length} Available Tasks
+          </div>
+          <div className="flex items-center">
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+            {selectedBattleTasks.length} Selected
+          </div>
+        </div>
       </div>
       
       <div className="mb-12 flex justify-center">
