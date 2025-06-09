@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Swords, Clock, Plus, Minus, Timer, ListPlus } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
@@ -17,6 +18,7 @@ const BattlePreparation: React.FC = () => {
     removeFromBattleSelection,
     clearBattleSelection
   } = useAppStore();
+  const navigate = useNavigate();
   
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>(selectedBattleTasks);
   const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
@@ -120,8 +122,6 @@ const BattlePreparation: React.FC = () => {
 
   const handleGoToTasks = () => {
     setActiveTab('tasks');
-    // Use React Router's navigate instead of manual history manipulation
-    const navigate = require('react-router-dom').useNavigate;
     navigate('/dashboard/tasks');
   };
   const handleDragEnd = (result: DropResult) => {
