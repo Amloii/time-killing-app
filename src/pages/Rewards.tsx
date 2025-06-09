@@ -7,6 +7,7 @@ import { WarriorRarity } from '../types';
 import WarriorCard from '../components/rewards/WarriorCard';
 import RewardsFilters from '../components/rewards/RewardsFilters';
 import PointsDisplay from '../components/common/PointsDisplay';
+import SamuraiMascot from '../components/common/SamuraiMascot';
 import { toast } from 'sonner';
 
 const Rewards: React.FC = () => {
