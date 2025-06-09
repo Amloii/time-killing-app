@@ -15,10 +15,11 @@ import PointsEarnedNotification from '../components/common/PointsEarnedNotificat
 import { PointsBreakdown } from '../utils/pointsCalculator';
 
 const Dashboard: React.FC = () => {
-  const { tasks, battleActive, updateTask, awardPoints, completeTask } = useAppStore();
+  const { tasks, battleActive, updateTask, awardPoints, completeTask, setActiveTab } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
   const [chopTask, setChopTask] = useState<Task | null>(null);
   const [pointsNotification, setPointsNotification] = useState<PointsBreakdown | null>(null);
+  const [selectedForBattle, setSelectedForBattle] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
@@ -55,6 +56,30 @@ const Dashboard: React.FC = () => {
     setChopTask(null);
   };
   
+  const handleAddToBattle = (taskId: string) => {
+    setSelectedForBattle(prev => {
+      if (prev.includes(taskId)) {
+        toast.info('Task already selected for battle');
+        return prev;
+      }
+      const newSelection = [...prev, taskId];
+      toast.success('Task added to battle selection!');
+      return newSelection;
+    });
+  };
+  
+  const handleGoToBattle = () => {
+    if (selectedForBattle.length === 0) {
+      toast.error('Please select at least one task for battle');
+      return;
+    }
+    
+    // Store selected tasks in localStorage temporarily
+    localStorage.setItem('pendingBattleTasks', JSON.stringify(selectedForBattle));
+    setActiveTab('battle');
+    navigate('/dashboard/battle');
+  };
+  
   if (battleActive) {
     return <ActiveBattle />;
   }
@@ -76,11 +101,28 @@ const Dashboard: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg sm:text-xl font-bold">Tasks</h2>
-                <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
-                  {uncompletedTasks.length}
-                </span>
+              <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-bold">Tasks</h2>
+                  <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
+                    {uncompletedTasks.length}
+                  </span>
+                </div>
+                
+                {selectedForBattle.length > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
+                      {selectedForBattle.length} selected for battle
+                    </span>
+                    <Button
+                      size="sm"
+                      onClick={handleGoToBattle}
+                      className="text-sm"
+                    >
+                      Go to Battle
+                    </Button>
+                  </div>
+                )}
               </div>
               
               <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 min-h-[300px] overflow-y-auto">
@@ -92,6 +134,8 @@ const Dashboard: React.FC = () => {
                   onChopTask={handleChopTask}
                   onTaskComplete={handleTaskComplete}
                   allowCompletion={false}
+                  showAddToBattle={true}
+                  onAddToBattle={handleAddToBattle}
                 />
               </div>
             </div>

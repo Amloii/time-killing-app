@@ -13,6 +13,8 @@ interface TaskListProps {
   onChopTask?: (task: Task) => void;
   onTaskComplete?: (taskId: string) => void;
   allowCompletion?: boolean;
+  showAddToBattle?: boolean;
+  onAddToBattle?: (taskId: string) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -25,6 +27,8 @@ const TaskList: React.FC<TaskListProps> = ({
   onChopTask,
   onTaskComplete,
   allowCompletion = false,
+  showAddToBattle = false,
+  onAddToBattle,
 }) => {
   // If tasks is empty, display empty message
   if (tasks.length === 0) {
@@ -53,6 +57,8 @@ const TaskList: React.FC<TaskListProps> = ({
                 onChopTask={onChopTask}
                 onTaskComplete={onTaskComplete}
                 allowCompletion={allowCompletion}
+                showAddToBattle={showAddToBattle}
+                onAddToBattle={onAddToBattle}
               />
             </div>
           );
@@ -78,6 +84,8 @@ const TaskList: React.FC<TaskListProps> = ({
                 onChopTask={onChopTask}
                 onTaskComplete={onTaskComplete}
                 allowCompletion={allowCompletion}
+                showAddToBattle={showAddToBattle}
+                onAddToBattle={onAddToBattle}
               />
             ))}
             {provided.placeholder}

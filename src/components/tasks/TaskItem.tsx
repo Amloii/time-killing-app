@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Draggable } from 'react-beautiful-dnd';
-import { Check, Trash, Clock, Star, ChevronDown, ChevronUp, Scissors } from 'lucide-react';
+import { Check, Trash, Clock, Star, ChevronDown, ChevronUp, Scissors, Swords } from 'lucide-react';
 import { Task } from '../../types';
 import { useAppStore } from '../../store';
 import { getPointsForTimeRange } from '../../utils/pointsCalculator';
