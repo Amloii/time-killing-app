@@ -168,8 +168,8 @@ const BattlePreparation: React.FC = () => {
   return (
     <div className="p-4 max-w-4xl mx-auto overflow-hidden">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Prepare for Battle</h1>
-        <p className="text-gray-600">Select your tasks and set your battle duration</p>
+        <h1 className="text-3xl fight-time-heading mb-2 text-black">Prepare for Battle</h1>
+        <p className="text-gray-600 fight-time-text">Select your tasks and set your battle duration</p>
       </div>
       
       <div className="mb-12 flex justify-center">

@@ -78,7 +78,7 @@ const Rewards: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold japanese-brush text-red-600 mb-4">
+          <h1 className="text-4xl fight-time-heading text-black mb-4">
             Warrior Collection
           </h1>
           <div className="mb-6">

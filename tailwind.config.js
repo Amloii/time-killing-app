@@ -5,6 +5,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Noto Sans JP', 'sans-serif'],
+        'fight-time': ['Anton', 'Oswald', 'sans-serif'],
+        'fight-time-text': ['Oswald', 'sans-serif'],
       },
       spacing: {
         'safe': 'env(safe-area-inset-bottom)',

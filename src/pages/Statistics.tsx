@@ -25,7 +25,7 @@ const Statistics: React.FC = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold japanese-brush text-red-600 mb-6">Battle Statistics</h1>
+      <h1 className="text-3xl fight-time-heading text-black mb-6">Battle Statistics</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>

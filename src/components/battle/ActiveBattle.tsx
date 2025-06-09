@@ -93,7 +93,7 @@ const ActiveBattle: React.FC = () => {
         animate={{ opacity: 1 }}
       >
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2 japanese-brush text-red-600">
+          <h1 className="text-3xl fight-time-heading mb-2 text-black">
             BATTLE IN PROGRESS
           </h1>
           <BattleTimer />

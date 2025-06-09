@@ -34,7 +34,7 @@ const BattleProgress: React.FC<BattleProgressProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mb-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold flex items-center">
+        <h2 className="text-xl fight-time-heading flex items-center">
           <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
           Battle Progress
         </h2>

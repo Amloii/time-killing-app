@@ -121,7 +121,7 @@ const Dashboard: React.FC = () => {
             <div>
               <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-lg sm:text-xl font-bold">Tasks</h2>
+                  <h2 className="text-lg sm:text-xl fight-time-heading">Tasks</h2>
                   <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
                     {uncompletedTasks.length}
                   </span>
@@ -161,13 +161,13 @@ const Dashboard: React.FC = () => {
             </div>
             
             <div>
-              <h2 className="text-lg sm:text-xl font-bold mb-4">Create Task</h2>
+              <h2 className="text-lg sm:text-xl fight-time-heading mb-4">Create Task</h2>
               <CreateTaskForm />
               
               {completedTasks.length > 0 && (
                 <div className="mt-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg sm:text-xl font-bold">Completed</h2>
+                    <h2 className="text-lg sm:text-xl fight-time-heading">Completed</h2>
                     <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-sm">
                       {completedTasks.length}
                     </span>

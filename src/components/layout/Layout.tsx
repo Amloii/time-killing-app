@@ -46,15 +46,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="bg-white bg-opacity-90 backdrop-blur-lg border-b border-gray-200 p-4 safe-area-inset">
         <div className="max-w-xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-red-400">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-black shadow-lg">
               <img
-                src="/0609.gif"
-                alt="Fight Mode"
+                src="/ChatGPT Image 9 jun 2025, 17_46_03.png"
+                alt="Fight Time"
                 className="w-full h-full object-cover"
-                style={{ imageRendering: 'pixelated' }}
               />
             </div>
-            <h1 className="text-xl font-bold japanese-brush text-red-600">Fight Mode</h1>
+            <h1 className="text-xl font-black uppercase tracking-tight text-black fight-time-font">Fight Time</h1>
           </div>
           <div className="flex items-center space-x-4">
             <PointsDisplay showProgress={false} size="md" />

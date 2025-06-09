@@ -101,7 +101,7 @@ const CreateTaskForm: React.FC = () => {
   
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200">
-      <h3 className="text-base sm:text-lg font-medium mb-4">Create New Task</h3>
+      <h3 className="text-base sm:text-lg fight-time-heading mb-4">Create New Task</h3>
       
       <div className="space-y-4">
         <div>
