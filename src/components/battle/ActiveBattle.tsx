@@ -79,6 +79,12 @@ const ActiveBattle: React.FC = () => {
             <span className="font-medium">Estimated time:</span> {currentTask.estimatedTime} minutes
           </p>
         )}
+        
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-yellow-800">
+            <strong>Battle Mode:</strong> Complete this task to earn points and advance to the next one!
+          </p>
+        </div>
       </motion.div>
       
       <div className="flex justify-center space-x-4">

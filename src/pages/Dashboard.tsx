@@ -91,6 +91,7 @@ const Dashboard: React.FC = () => {
                   isDraggable={false}
                   onChopTask={handleChopTask}
                   onTaskComplete={handleTaskComplete}
+                  allowCompletion={false}
                 />
               </div>
             </div>
@@ -114,6 +115,7 @@ const Dashboard: React.FC = () => {
                       droppableId="completed-tasks"
                       emptyMessage="No completed tasks yet"
                       isDraggable={false}
+                      allowCompletion={false}
                     />
                   </div>
                 </div>

@@ -13,14 +13,24 @@ interface TaskItemProps {
   isDraggable?: boolean;
   onChopTask?: (task: Task) => void;
   onTaskComplete?: (taskId: string) => void;
+  allowCompletion?: boolean;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, onChopTask, onTaskComplete }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ 
+  task, 
+  index, 
+  isDraggable = true, 
+  onChopTask, 
+  onTaskComplete,
+  allowCompletion = false 
+}) => {
   const { completeTask, deleteTask } = useAppStore();
   const [showSubtasks, setShowSubtasks] = useState(false);
   const pointsRange = getPointsForTimeRange(task.estimatedTime || 30);
   
   const handleCompleteTask = () => {
+    if (!allowCompletion) return;
+    
     if (onTaskComplete) {
       onTaskComplete(task.id);
     } else {
@@ -119,13 +129,24 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, index, isDraggable = true, on
             </motion.button>
           )}
           
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="p-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200"
-            onClick={handleCompleteTask}
-          >
-            <Check className="w-5 h-5" />
-          </motion.button>
+          {allowCompletion ? (
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="p-1 rounded-full bg-green-100 text-green-600 hover:bg-green-200"
+              onClick={handleCompleteTask}
+              title="Complete task"
+            >
+              <Check className="w-5 h-5" />
+            </motion.button>
+          ) : (
+            <motion.button
+              className="p-1 rounded-full bg-gray-100 text-gray-400 cursor-not-allowed"
+              title="Tasks can only be completed during battle"
+              disabled
+            >
+              <Check className="w-5 h-5" />
+            </motion.button>
+          )}
           
           <motion.button
             whileTap={{ scale: 0.9 }}
