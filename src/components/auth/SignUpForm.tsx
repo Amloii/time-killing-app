@@ -178,8 +178,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onBack, onSuccess, onSwitchToSi
   return (
     <div className="max-w-md mx-auto max-h-[90vh] overflow-y-auto">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
         className="bg-white rounded-lg shadow-xl p-8"
       >
         <button
