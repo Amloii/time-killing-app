@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
         {/* Show centered mascot on tasks page */}
         {activeTab === 'tasks' && (
           <div className="flex justify-center mb-8">
-            <SamuraiMascot mood="ready" size={120} />
+            <SamuraiMascot mood="ready\" size={120} />
           </div>
         )}
         
