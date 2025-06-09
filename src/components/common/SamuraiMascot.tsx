@@ -136,14 +136,6 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 200 }) => {
       )}
       
       {/* Japanese Calligraphy Style Accent */}
-      <div className="mt-2 text-center">
-        <div className="text-red-600 font-bold japanese-brush text-lg">
-          {mood === 'victory' ? '勝利' : mood === 'focused' ? '集中' : mood === 'ready' ? '準備' : '敗北'}
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          {mood === 'victory' ? 'Victory' : mood === 'focused' ? 'Focus' : mood === 'ready' ? 'Ready' : 'Defeat'}
-        </div>
-      </div>
     </div>
   );
 };
