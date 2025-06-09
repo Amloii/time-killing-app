@@ -35,7 +35,7 @@ const PointsDisplay: React.FC<PointsDisplayProps> = ({
   return (
     <div className="flex items-center space-x-3">
       <motion.div 
-        className="flex items-center space-x-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full shadow-md"
+        className="flex items-center space-x-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1.5 rounded-full shadow-md"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -43,6 +43,13 @@ const PointsDisplay: React.FC<PointsDisplayProps> = ({
         <span className={`font-bold ${sizeClasses[size]}`}>
           {userProfile.points.toLocaleString()}
         </span>
+        {userProfile.points > 0 && (
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-1 h-1 bg-yellow-200 rounded-full"
+          />
+        )}
       </motion.div>
 
       {showProgress && (

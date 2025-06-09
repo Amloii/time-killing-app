@@ -96,6 +96,15 @@ const ActiveBattle: React.FC = () => {
           <h1 className="text-3xl fight-time-heading mb-2 text-black">
             BATTLE IN PROGRESS
           </h1>
+          <div className="flex justify-center items-center space-x-4 mb-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+              Live Session
+            </div>
+            <div className="text-sm text-gray-600">
+              Task {currentTaskIndex + 1} of {currentSession.taskIds.length}
+            </div>
+          </div>
           <BattleTimer />
         </div>
         

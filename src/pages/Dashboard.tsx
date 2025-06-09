@@ -122,14 +122,14 @@ const Dashboard: React.FC = () => {
               <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg sm:text-xl fight-time-heading">Tasks</h2>
-                  <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
+                  <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm font-medium">
                     {uncompletedTasks.length}
                   </span>
                 </div>
                 
                 {selectedBattleTasks.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium animate-pulse">
                       {selectedBattleTasks.length} selected for battle
                     </span>
                     <Button
@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
                 )}
               </div>
               
-              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 min-h-[300px] overflow-y-auto">
+              <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 min-h-[400px] max-h-[600px] overflow-y-auto">
                 <TaskList
                   tasks={uncompletedTasks}
                   droppableId="dashboard-tasks"
@@ -168,12 +168,12 @@ const Dashboard: React.FC = () => {
                 <div className="mt-6">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg sm:text-xl fight-time-heading">Completed</h2>
-                    <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-sm">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-sm font-medium">
                       {completedTasks.length}
                     </span>
                   </div>
                   
-                  <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 max-h-[300px] overflow-y-auto">
+                  <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200 max-h-[400px] overflow-y-auto">
                     <TaskList
                       tasks={completedTasks}
                       droppableId="completed-tasks"
