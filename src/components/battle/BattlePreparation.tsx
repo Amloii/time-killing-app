@@ -120,7 +120,9 @@ const BattlePreparation: React.FC = () => {
 
   const handleGoToTasks = () => {
     setActiveTab('tasks');
-    window.history.pushState(null, '', '/dashboard/tasks');
+    // Use React Router's navigate instead of manual history manipulation
+    const navigate = require('react-router-dom').useNavigate;
+    navigate('/dashboard/tasks');
   };
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
