@@ -3,6 +3,8 @@ import { Task, BattleSession, AppSettings, SubTask, UserProfile, PointTransactio
 import { getTasks, saveTasks, getSessions, saveSessions, getSettings, saveSettings, getUserProfile, saveUserProfile, getTransactions, saveTransactions } from '../utils/localStorage';
 import { calculateTaskPoints } from '../utils/pointsCalculator';
 import { WARRIORS } from '../utils/warriors';
+import { dataSyncService } from '../utils/dataSync';
+import { supabase } from '../utils/supabase';
 
 interface AppState {
   tasks: Task[];
@@ -15,6 +17,8 @@ interface AppState {
   currentTaskIndex: number;
   timeRemaining: number;
   selectedBattleTasks: string[];
+  lastSyncTime: number | null;
+  syncInProgress: boolean;
   
   // Task actions
   addTask: (task: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void;
@@ -47,6 +51,10 @@ interface AppState {
   addToBattleSelection: (taskId: string) => void;
   removeFromBattleSelection: (taskId: string) => void;
   clearBattleSelection: () => void;
+  
+  // Sync actions
+  syncWithSupabase: () => Promise<void>;
+  clearLocalData: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -60,6 +68,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   currentTaskIndex: 0,
   timeRemaining: 0,
   selectedBattleTasks: [],
+  lastSyncTime: null,
+  syncInProgress: false,
   
   // Task actions
   addTask: (task) => {
@@ -74,6 +84,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => {
       const updatedTasks = [...state.tasks, newTask];
       saveTasks(updatedTasks);
+      
+      // Sync to cloud if authenticated
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          dataSyncService.addTaskToCloud(newTask);
+        }
+      });
+      
       return { tasks: updatedTasks };
     });
   },
@@ -84,6 +102,17 @@ export const useAppStore = create<AppState>((set, get) => ({
         task.id === taskId ? { ...task, ...updates } : task
       );
       saveTasks(updatedTasks);
+      
+      // Sync to cloud if authenticated
+      const updatedTask = updatedTasks.find(t => t.id === taskId);
+      if (updatedTask) {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            dataSyncService.updateTaskInCloud(updatedTask);
+          }
+        });
+      }
+      
       return { tasks: updatedTasks };
     });
   },
@@ -96,6 +125,17 @@ export const useAppStore = create<AppState>((set, get) => ({
           : task
       );
       saveTasks(updatedTasks);
+      
+      // Sync to cloud if authenticated
+      const completedTask = updatedTasks.find(t => t.id === taskId);
+      if (completedTask) {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            dataSyncService.updateTaskInCloud(completedTask);
+          }
+        });
+      }
+      
       return { tasks: updatedTasks };
     });
   },
@@ -104,6 +144,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((state) => {
       const updatedTasks = state.tasks.filter((task) => task.id !== taskId);
       saveTasks(updatedTasks);
+      
+      // Sync to cloud if authenticated
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          dataSyncService.deleteTaskFromCloud(taskId);
+        }
+      });
+      
       return { tasks: updatedTasks };
     });
   },
@@ -231,6 +279,17 @@ export const useAppStore = create<AppState>((set, get) => ({
       });
       
       saveTasks(updatedTasks);
+      
+      // Sync to cloud if authenticated
+      const updatedTask = updatedTasks.find(t => t.id === parentTaskId);
+      if (updatedTask) {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            dataSyncService.updateTaskInCloud(updatedTask);
+          }
+        });
+      }
+      
       return { tasks: updatedTasks };
     });
   },
@@ -284,6 +343,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveUserProfile(updatedProfile);
     saveTransactions(updatedTransactions);
     
+    // Sync to cloud if authenticated
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        dataSyncService.updateProfileInCloud(updatedProfile);
+        dataSyncService.addTransactionToCloud(transaction);
+      }
+    });
+    
     set({
       userProfile: updatedProfile,
       transactions: updatedTransactions,
@@ -317,6 +384,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveUserProfile(updatedProfile);
     saveTransactions(updatedTransactions);
     
+    // Sync to cloud if authenticated
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        dataSyncService.updateProfileInCloud(updatedProfile);
+        dataSyncService.addTransactionToCloud(transaction);
+      }
+    });
+    
     set({
       userProfile: updatedProfile,
       transactions: updatedTransactions,
@@ -333,6 +408,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     };
     
     saveUserProfile(updatedProfile);
+    
+    // Sync to cloud if authenticated
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        dataSyncService.updateProfileInCloud(updatedProfile);
+      }
+    });
+    
     set({ userProfile: updatedProfile });
   },
   
@@ -374,7 +457,59 @@ export const useAppStore = create<AppState>((set, get) => ({
       };
       
       saveUserProfile(updatedProfile);
+      
+      // Sync to cloud if authenticated
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          dataSyncService.updateProfileInCloud(updatedProfile);
+        }
+      });
+      
       set({ userProfile: updatedProfile });
     }
+  },
+  
+  // Sync actions
+  syncWithSupabase: async () => {
+    const state = get();
+    if (state.syncInProgress) return;
+    
+    set({ syncInProgress: true });
+    
+    try {
+      // Sync profile
+      const syncedProfile = await dataSyncService.syncProfile(state.userProfile);
+      if (syncedProfile) {
+        saveUserProfile(syncedProfile);
+        set({ userProfile: syncedProfile });
+      }
+      
+      // Sync tasks
+      const syncedTasks = await dataSyncService.syncTasks(state.tasks);
+      saveTasks(syncedTasks);
+      set({ tasks: syncedTasks });
+      
+      // Sync transactions
+      const syncedTransactions = await dataSyncService.syncTransactions(state.transactions);
+      saveTransactions(syncedTransactions);
+      set({ transactions: syncedTransactions });
+      
+      set({ lastSyncTime: Date.now() });
+    } catch (error) {
+      console.error('Sync failed:', error);
+    } finally {
+      set({ syncInProgress: false });
+    }
+  },
+  
+  clearLocalData: () => {
+    localStorage.clear();
+    set({
+      tasks: [],
+      userProfile: getUserProfile(),
+      transactions: [],
+      selectedBattleTasks: [],
+      lastSyncTime: null,
+    });
   },
 }));
