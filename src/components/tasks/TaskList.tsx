@@ -15,6 +15,8 @@ interface TaskListProps {
   allowCompletion?: boolean;
   showAddToBattle?: boolean;
   onAddToBattle?: (taskId: string) => void;
+  selectedForBattle?: string[];
+  onRemoveFromBattle?: (taskId: string) => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -29,6 +31,8 @@ const TaskList: React.FC<TaskListProps> = ({
   allowCompletion = false,
   showAddToBattle = false,
   onAddToBattle,
+  selectedForBattle = [],
+  onRemoveFromBattle,
 }) => {
   // If tasks is empty, display empty message
   if (tasks.length === 0) {
@@ -59,6 +63,8 @@ const TaskList: React.FC<TaskListProps> = ({
                 allowCompletion={allowCompletion}
                 showAddToBattle={showAddToBattle}
                 onAddToBattle={onAddToBattle}
+                selectedForBattle={selectedForBattle}
+                onRemoveFromBattle={onRemoveFromBattle}
               />
             </div>
           );
@@ -86,6 +92,8 @@ const TaskList: React.FC<TaskListProps> = ({
                 allowCompletion={allowCompletion}
                 showAddToBattle={showAddToBattle}
                 onAddToBattle={onAddToBattle}
+                selectedForBattle={selectedForBattle}
+                onRemoveFromBattle={onRemoveFromBattle}
               />
             ))}
             {provided.placeholder}

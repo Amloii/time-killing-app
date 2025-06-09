@@ -7,30 +7,27 @@ import TaskSelectionPage from './TaskSelectionPage';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 const BattlePreparation: React.FC = () => {
-  const { tasks, settings, createSession, startBattle, setActiveTab } = useAppStore();
+  const { 
+    tasks, 
+    settings, 
+    createSession, 
+    startBattle, 
+    setActiveTab,
+    selectedBattleTasks,
+    removeFromBattleSelection,
+    clearBattleSelection
+  } = useAppStore();
   
-  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>(selectedBattleTasks);
   const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
-  // Check for pending battle tasks from localStorage
+  // Sync with store's selected battle tasks
   React.useEffect(() => {
-    const pendingTasks = localStorage.getItem('pendingBattleTasks');
-    if (pendingTasks) {
-      try {
-        const taskIds = JSON.parse(pendingTasks);
-        setSelectedTaskIds(prev => {
-          const newIds = taskIds.filter((id: string) => !prev.includes(id));
-          return [...prev, ...newIds];
-        });
-        localStorage.removeItem('pendingBattleTasks');
-      } catch (error) {
-        console.error('Error parsing pending battle tasks:', error);
-      }
-    }
-  }, []);
+    setSelectedTaskIds(selectedBattleTasks);
+  }, [selectedBattleTasks]);
   
   // Get selected tasks and their subtasks
   const selectedItems = React.useMemo(() => {
@@ -66,6 +63,7 @@ const BattlePreparation: React.FC = () => {
 
   const handleRemoveTask = (taskId: string) => {
     setSelectedTaskIds(prev => prev.filter(id => id !== taskId));
+    removeFromBattleSelection(taskId);
     // Also remove any selected subtasks from this task
     const task = tasks.find(t => t.id === taskId);
     if (task?.subTasks) {
@@ -151,6 +149,7 @@ const BattlePreparation: React.FC = () => {
     
     createSession(duration, Array.from(allTaskIds));
     startBattle();
+    clearBattleSelection();
   };
   
   if (showTaskSelection) {

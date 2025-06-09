@@ -15,11 +15,20 @@ import { PointsBreakdown } from '../utils/pointsCalculator';
 import Button from '../components/common/Button';
 
 const Dashboard: React.FC = () => {
-  const { tasks, battleActive, updateTask, awardPoints, completeTask, setActiveTab } = useAppStore();
+  const { 
+    tasks, 
+    battleActive, 
+    updateTask, 
+    awardPoints, 
+    completeTask, 
+    setActiveTab,
+    selectedBattleTasks,
+    addToBattleSelection,
+    removeFromBattleSelection
+  } = useAppStore();
   const [showSettings, setShowSettings] = useState(false);
   const [chopTask, setChopTask] = useState<Task | null>(null);
   const [pointsNotification, setPointsNotification] = useState<PointsBreakdown | null>(null);
-  const [selectedForBattle, setSelectedForBattle] = useState<string[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = location.pathname.split('/').pop() || 'battle';
@@ -57,12 +66,29 @@ const Dashboard: React.FC = () => {
   };
   
   const handleAddToBattle = (taskId: string) => {
-    setSelectedForBattle(prev => {
-      if (prev.includes(taskId)) {
-        toast.info('Task already selected for battle');
-        return prev;
-      }
-      const newSelection = [...prev, taskId];
+    if (selectedBattleTasks.includes(taskId)) {
+      toast.info('Task already selected for battle');
+      return;
+    }
+    
+    addToBattleSelection(taskId);
+    toast.success('Task added to battle selection!');
+  };
+  
+  const handleRemoveFromBattle = (taskId: string) => {
+    removeFromBattleSelection(taskId);
+    toast.info('Task removed from battle selection');
+  };
+  
+  const handleGoToBattle = () => {
+    if (selectedBattleTasks.length === 0) {
+      toast.error('Please select at least one task for battle');
+      return;
+    }
+    
+    setActiveTab('battle');
+    navigate('/dashboard/battle');
+  };
       toast.success('Task added to battle selection!');
       return newSelection;
     });
@@ -109,10 +135,10 @@ const Dashboard: React.FC = () => {
                   </span>
                 </div>
                 
-                {selectedForBattle.length > 0 && (
+                {selectedBattleTasks.length > 0 && (
                   <div className="flex items-center gap-2">
                     <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
-                      {selectedForBattle.length} selected for battle
+                      {selectedBattleTasks.length} selected for battle
                     </span>
                     <Button
                       size="sm"
@@ -136,6 +162,8 @@ const Dashboard: React.FC = () => {
                   allowCompletion={false}
                   showAddToBattle={true}
                   onAddToBattle={handleAddToBattle}
+                  selectedForBattle={selectedBattleTasks}
+                  onRemoveFromBattle={handleRemoveFromBattle}
                 />
               </div>
             </div>

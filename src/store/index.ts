@@ -14,6 +14,7 @@ interface AppState {
   activeTab: 'tasks' | 'battle';
   currentTaskIndex: number;
   timeRemaining: number;
+  selectedBattleTasks: string[];
   
   // Task actions
   addTask: (task: Omit<Task, 'id' | 'completed' | 'createdAt'>) => void;
@@ -41,6 +42,11 @@ interface AppState {
   purchaseWarrior: (warriorId: string) => void;
   setActiveWarrior: (warriorId: string) => void;
   updateStreak: () => void;
+  
+  // Battle task selection
+  addToBattleSelection: (taskId: string) => void;
+  removeFromBattleSelection: (taskId: string) => void;
+  clearBattleSelection: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -53,6 +59,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   activeTab: 'battle',
   currentTaskIndex: 0,
   timeRemaining: 0,
+  selectedBattleTasks: [],
   
   // Task actions
   addTask: (task) => {
@@ -327,6 +334,25 @@ export const useAppStore = create<AppState>((set, get) => ({
     
     saveUserProfile(updatedProfile);
     set({ userProfile: updatedProfile });
+  },
+  
+  // Battle task selection
+  addToBattleSelection: (taskId) => {
+    set((state) => ({
+      selectedBattleTasks: state.selectedBattleTasks.includes(taskId)
+        ? state.selectedBattleTasks
+        : [...state.selectedBattleTasks, taskId]
+    }));
+  },
+  
+  removeFromBattleSelection: (taskId) => {
+    set((state) => ({
+      selectedBattleTasks: state.selectedBattleTasks.filter(id => id !== taskId)
+    }));
+  },
+  
+  clearBattleSelection: () => {
+    set({ selectedBattleTasks: [] });
   },
   
   updateStreak: () => {
