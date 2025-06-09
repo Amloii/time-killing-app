@@ -9,12 +9,9 @@ interface SamuraiMascotProps {
 }
 
 const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnimation = true }) => {
-  // You can replace this URL with your Google Drive GIF URL
-  // To get a direct link from Google Drive:
-  // 1. Make sure the file is publicly viewable
-  // 2. Get the file ID from your URL: 1FMzxT69VHQu-JN3ZTwdG2ywiror7WUcE
-  // 3. Use this format: https://drive.google.com/uc?export=view&id=FILE_ID
-  const animationGifUrl = "https://drive.google.com/uc?export=view&id=1FMzxT69VHQu-JN3ZTwdG2ywiror7WUcE";
+  // Simple animated GIF as base64 - this is a small spinning ninja star animation
+  // You can replace this with any GIF converted to base64
+  const animatedGifBase64 = "data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wjRLEuQRNnGt7QpVdNhHJBkaK0VGJQCdHjyOl5Q2FizkVDkzNzuAYrXTYqwUAIfkECQoAAAAsAAAAABAAEAAAAzQIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wjRLEuQRNnGt7QpVdNhHJBkaK0VGJQCdHjyOl5Q2FizkVDkzNzuAYrXTYqwUAOw==";
   
   // Fallback expressions for different moods (used if GIF fails to load)
   const expressions = {
@@ -72,10 +69,10 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnim
             width: `${size}px`, 
             height: `${size}px` 
           }}
-          className="relative overflow-hidden rounded-full border-4 border-gray-900 bg-white"
+          className="relative overflow-hidden rounded-full border-4 border-gray-900 bg-gradient-to-br from-red-100 to-red-200 shadow-lg"
         >
           <img
-            src={animationGifUrl}
+            src={animatedGifBase64}
             alt="Warrior Animation"
             className={`w-full h-full object-cover transition-opacity duration-300 ${
               gifLoaded ? 'opacity-100' : 'opacity-0'
@@ -89,22 +86,48 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnim
           
           {/* Loading placeholder */}
           {!gifLoaded && !gifError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-100 to-red-200">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
             </div>
           )}
+          
+          {/* Overlay effect based on mood */}
+          <div className={`absolute inset-0 rounded-full ${
+            mood === 'victory' ? 'bg-green-400 bg-opacity-20' :
+            mood === 'defeat' ? 'bg-gray-400 bg-opacity-30' :
+            mood === 'focused' ? 'bg-blue-400 bg-opacity-20' :
+            'bg-red-400 bg-opacity-10'
+          }`} />
         </div>
         
         {/* Mood indicator */}
-        <div className={`mt-2 text-sm font-medium ${currentExpression.color}`}>
+        <div className={`mt-2 text-sm font-bold ${currentExpression.color} bg-white px-2 py-1 rounded-full shadow-sm`}>
           {mood.charAt(0).toUpperCase() + mood.slice(1)}
         </div>
         
         {/* Sword for certain moods */}
         {(mood === 'ready' || mood === 'victory') && (
-          <div className="mt-2 text-gray-700">
+          <motion.div 
+            className="mt-2 text-gray-700"
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
             <Sword size={size * 0.4} />
-          </div>
+          </motion.div>
+        )}
+        
+        {/* Special effects for victory */}
+        {mood === 'victory' && (
+          <motion.div
+            className="absolute -top-2 -right-2"
+            animate={{ 
+              scale: [1, 1.2, 1],
+              rotate: [0, 360]
+            }}
+            transition={{ repeat: Infinity, duration: 1 }}
+          >
+            <span className="text-2xl">✨</span>
+          </motion.div>
         )}
       </motion.div>
     );
@@ -118,7 +141,7 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnim
     >
       {/* Helmet */}
       <div 
-        className="bg-gray-900 rounded-t-full w-full" 
+        className="bg-gray-900 rounded-t-full w-full shadow-lg" 
         style={{ 
           width: `${size * 0.8}px`, 
           height: `${size * 0.4}px` 
@@ -132,7 +155,7 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnim
       
       {/* Face */}
       <div 
-        className="bg-white rounded-full flex flex-col items-center justify-center border-2 border-gray-900"
+        className="bg-white rounded-full flex flex-col items-center justify-center border-4 border-gray-900 shadow-lg"
         style={{ 
           width: `${size}px`, 
           height: `${size}px` 
@@ -157,9 +180,13 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 100, useAnim
       
       {/* Sword */}
       {(mood === 'ready' || mood === 'victory') && (
-        <div className="mt-2 text-gray-700">
+        <motion.div 
+          className="mt-2 text-gray-700"
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+        >
           <Sword size={size * 0.4} />
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );
