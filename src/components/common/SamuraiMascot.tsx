@@ -1,11 +1,11 @@
 import React from 'react';
 
 interface SamuraiMascotProps {
-  mood: 'ready' | 'focused' | 'victory' | 'defeat';
+  mood?: 'ready' | 'focused' | 'victory' | 'defeat';
   size?: number;
 }
 
-const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 200 }) => {
+const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood = 'ready', size = 200 }) => {
   // Mood-based styling
   const moodConfig = {
     ready: { 
