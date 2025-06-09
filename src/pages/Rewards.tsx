@@ -76,11 +76,20 @@ const Rewards: React.FC = () => {
     <div className="min-h-screen bg-sakura p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h1 className="text-4xl font-bold japanese-brush text-red-600 mb-4">
             Warrior Collection
           </h1>
-          <PointsDisplay size="lg" />
+          <div className="mb-6">
+            <PointsDisplay size="lg" />
+          </div>
+          
+          {/* Show victory mascot if user has warriors */}
+          {ownedWarriors.length > 0 && (
+            <div className="flex justify-center">
+              <SamuraiMascot mood="victory" size={140} />
+            </div>
+          )}
         </div>
 
         {/* Collection Stats */}

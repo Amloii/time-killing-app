@@ -172,8 +172,8 @@ const BattlePreparation: React.FC = () => {
         <p className="text-gray-600">Select your tasks and set your battle duration</p>
       </div>
       
-      <div className="mb-8 flex justify-center">
-        <SamuraiMascot mood="ready" size={120} />
+      <div className="mb-12 flex justify-center">
+        <SamuraiMascot mood="ready" size={180} />
       </div>
       
       <div className="mb-8 bg-white rounded-lg shadow-md border border-gray-200">

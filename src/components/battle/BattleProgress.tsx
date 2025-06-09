@@ -38,7 +38,7 @@ const BattleProgress: React.FC<BattleProgressProps> = ({
           <Trophy className="w-6 h-6 mr-2 text-yellow-500" />
           Battle Progress
         </h2>
-        <PointsDisplay showProgress={false} size="sm" />
+        <PointsDisplay showProgress={false} size="md" />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

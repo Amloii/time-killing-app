@@ -22,8 +22,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex flex-col min-h-screen">
       <header className="bg-white bg-opacity-90 backdrop-blur-lg border-b border-gray-200 p-4 safe-area-inset">
         <div className="max-w-xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold japanese-brush text-red-600">Fight Mode</h1>
-          <PointsDisplay showProgress={false} size="sm" />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-red-400">
+              <img
+                src="/0609.gif"
+                alt="Fight Mode"
+                className="w-full h-full object-cover"
+                style={{ imageRendering: 'pixelated' }}
+              />
+            </div>
+            <h1 className="text-xl font-bold japanese-brush text-red-600">Fight Mode</h1>
+          </div>
+          <PointsDisplay showProgress={false} size="md" />
         </div>
       </header>
       

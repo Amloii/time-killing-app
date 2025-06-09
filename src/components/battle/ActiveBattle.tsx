@@ -109,8 +109,8 @@ const ActiveBattle: React.FC = () => {
               timeElapsed={timeElapsed}
             />
             
-            <div className="flex justify-center mb-6">
-              <SamuraiMascot mood="focused" size={120} />
+            <div className="flex justify-center mb-8">
+              <SamuraiMascot mood="focused" size={160} />
             </div>
           </div>
           
