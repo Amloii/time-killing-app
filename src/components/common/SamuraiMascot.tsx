@@ -112,13 +112,12 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 200 }) => {
         {/* Mood Indicator Badge */}
         <div
           className={`absolute -bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg ${
-            mood === 'ready' ? 'bg-green-500' :
             mood === 'focused' ? 'bg-blue-500' :
             mood === 'victory' ? 'bg-yellow-500' :
-            'bg-gray-500'
+            mood === 'defeat' ? 'bg-gray-500' : 'bg-green-500'
           }`}
         >
-          {currentMood.label}
+          {mood === 'ready' ? '' : currentMood.label}
         </div>
         
         {/* Smaller Ready for Battle label positioned outside the GIF */}
