@@ -120,6 +120,13 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood, size = 200 }) => {
         >
           {currentMood.label}
         </div>
+        
+        {/* Smaller Ready for Battle label positioned outside the GIF */}
+        {mood === 'ready' && (
+          <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-full text-xs font-medium text-white bg-green-500 shadow-md">
+            Ready for Battle!
+          </div>
+        )}
       </div>
       
       {/* Static Sword for Ready and Victory modes */}
