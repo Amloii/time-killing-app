@@ -8,6 +8,7 @@ import BattlePreparation from '../components/battle/BattlePreparation';
 import ActiveBattle from '../components/battle/ActiveBattle';
 import SettingsPanel from '../components/settings/SettingsPanel';
 import { Settings as SettingsIcon } from 'lucide-react';
+import SamuraiMascot from '../components/common/SamuraiMascot';
 import { Task, SubTask } from '../types';
 import { toast } from 'sonner';
 import PointsEarnedNotification from '../components/common/PointsEarnedNotification';
