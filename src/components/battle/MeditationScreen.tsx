@@ -63,12 +63,14 @@ const MeditationScreen: React.FC<MeditationScreenProps> = ({ onComplete, onSkip 
       breathInterval = setInterval(() => {
         setBreathCount(prev => {
           if (prev <= 1) {
+            let nextPhase: 'inhale' | 'hold' | 'exhale';
             setBreathPhase(current => {
               if (current === 'inhale') return 'hold';
               if (current === 'hold') return 'exhale';
-              return 'inhale';
+              nextPhase = 'inhale';
+              return nextPhase;
             });
-            return current === 'exhale' ? 6 : 4;
+            return nextPhase === 'exhale' ? 6 : 4;
           }
           return prev - 1;
         });
