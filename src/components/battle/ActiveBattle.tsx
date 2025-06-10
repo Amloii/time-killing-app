@@ -9,6 +9,8 @@ import Button from '../common/Button';
 import SamuraiMascot from '../common/SamuraiMascot';
 import { toast } from 'sonner';
 import { getPointsForTimeRange } from '../../utils/pointsCalculator';
+import { useVibration } from '../../hooks/useVibration';
+import { useNotifications } from '../../hooks/useNotifications';
 
 const ActiveBattle: React.FC = () => {
   const { 
@@ -21,6 +23,9 @@ const ActiveBattle: React.FC = () => {
     endBattle,
     userProfile
   } = useAppStore();
+  
+  const { vibrateSuccess, vibrateNotification } = useVibration();
+  const { showNotification } = useNotifications();
   
   const [showVerification, setShowVerification] = useState(false);
   const [taskToVerify, setTaskToVerify] = useState<string | null>(null);
@@ -66,10 +71,16 @@ const ActiveBattle: React.FC = () => {
       if (result.pointsBreakdown) {
         setPointsEarned(prev => prev + result.pointsBreakdown.total);
         toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
+        vibrateSuccess();
+        showNotification('Task Completed!', {
+          body: `You earned ${result.pointsBreakdown.total} points!`,
+          icon: '/icon-192.png'
+        });
       }
       
       // Move to next task or end battle
       if (isLastTask) {
+        vibrateNotification();
         setTimeout(() => endBattle(true), 1500);
       } else {
         setTimeout(() => nextTask(), 1000);

@@ -7,6 +7,7 @@ import SamuraiMascot from '../common/SamuraiMascot';
 import TaskSelectionPage from './TaskSelectionPage';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
+import { useVibration } from '../../hooks/useVibration';
 import MeditationScreen from './MeditationScreen';
 
 const BattlePreparation: React.FC = () => {
@@ -21,6 +22,7 @@ const BattlePreparation: React.FC = () => {
     clearBattleSelection
   } = useAppStore();
   const navigate = useNavigate();
+  const { vibrateBattleStart } = useVibration();
   
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>(selectedBattleTasks);
   const [selectedSubtaskIds, setSelectedSubtaskIds] = useState<string[]>([]);
@@ -160,6 +162,7 @@ const BattlePreparation: React.FC = () => {
   const startActualBattle = () => {
     // Use only the selected task IDs in order
     createSession(duration, selectedTaskIds);
+    vibrateBattleStart();
     startBattle();
     clearBattleSelection();
   };

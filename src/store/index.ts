@@ -5,6 +5,8 @@ import { calculateTaskPoints } from '../utils/pointsCalculator';
 import { WARRIORS } from '../utils/warriors';
 import { dataSyncService } from '../utils/dataSync';
 import { supabase } from '../utils/supabase';
+import { useNotifications } from '../hooks/useNotifications';
+import { useVibration } from '../hooks/useVibration';
 
 interface AppState {
   tasks: Task[];
@@ -31,6 +33,10 @@ interface AppState {
   startBattle: () => void;
   endBattle: (completed: boolean) => void;
   nextTask: () => void;
+  
+  // PWA actions
+  sendNotification: (title: string, options?: NotificationOptions) => void;
+  triggerVibration: (pattern: number | number[]) => void;
   
   // Settings actions
   updateSettings: (settings: Partial<AppSettings>) => void;
