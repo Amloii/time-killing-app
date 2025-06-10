@@ -1,17 +1,26 @@
 // PWA utility functions
 
 export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration | null> => {
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('Service Worker registered successfully:', registration);
-      return registration;
-    } catch (error) {
-      console.error('Service Worker registration failed:', error);
-      return null;
-    }
+  // Check if we're in a supported environment
+  if (!('serviceWorker' in navigator)) {
+    console.log('Service Workers not supported in this browser');
+    return null;
   }
-  return null;
+
+  // Check if we're in StackBlitz or other unsupported environments
+  if (window.location.hostname === 'localhost' && window.location.port === '5173') {
+    console.log('Service Worker registration skipped in development environment');
+    return null;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.register('/sw.js');
+    console.log('Service Worker registered successfully:', registration);
+    return registration;
+  } catch (error) {
+    console.log('Service Worker registration failed (this is expected in some environments):', error);
+    return null;
+  }
 };
 
 export const unregisterServiceWorker = async (): Promise<boolean> => {
@@ -24,7 +33,7 @@ export const unregisterServiceWorker = async (): Promise<boolean> => {
         return result;
       }
     } catch (error) {
-      console.error('Service Worker unregistration failed:', error);
+      console.log('Service Worker unregistration failed:', error);
     }
   }
   return false;
@@ -39,7 +48,7 @@ export const checkForUpdates = async (): Promise<boolean> => {
         return true;
       }
     } catch (error) {
-      console.error('Update check failed:', error);
+      console.log('Update check failed:', error);
     }
   }
   return false;
@@ -67,7 +76,7 @@ export const shareContent = async (data: ShareData): Promise<boolean> => {
       await navigator.share(data);
       return true;
     } catch (error) {
-      console.error('Share failed:', error);
+      console.log('Share failed:', error);
     }
   }
   return false;
@@ -79,7 +88,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       await navigator.clipboard.writeText(text);
       return true;
     } catch (error) {
-      console.error('Clipboard write failed:', error);
+      console.log('Clipboard write failed:', error);
     }
   }
   
@@ -93,7 +102,7 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
     document.body.removeChild(textArea);
     return true;
   } catch (error) {
-    console.error('Fallback copy failed:', error);
+    console.log('Fallback copy failed:', error);
     return false;
   }
 };
@@ -105,7 +114,7 @@ export const requestWakeLock = async (): Promise<WakeLockSentinel | null> => {
       console.log('Wake lock acquired');
       return wakeLock;
     } catch (error) {
-      console.error('Wake lock request failed:', error);
+      console.log('Wake lock request failed:', error);
     }
   }
   return null;
@@ -116,6 +125,6 @@ export const releaseWakeLock = async (wakeLock: WakeLockSentinel): Promise<void>
     await wakeLock.release();
     console.log('Wake lock released');
   } catch (error) {
-    console.error('Wake lock release failed:', error);
+    console.log('Wake lock release failed:', error);
   }
 };
