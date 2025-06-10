@@ -7,6 +7,8 @@ import SamuraiMascot from '../common/SamuraiMascot';
 import TaskSelectionPage from './TaskSelectionPage';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
+import MeditationScreen from './MeditationScreen';
+
 const BattlePreparation: React.FC = () => {
   const { 
     tasks, 
@@ -25,6 +27,7 @@ const BattlePreparation: React.FC = () => {
   const [duration, setDuration] = useState(settings.defaultSessionDuration);
   const [showTaskSelection, setShowTaskSelection] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showMeditation, setShowMeditation] = useState(false);
   
   // Sync with store's selected battle tasks
   React.useEffect(() => {
@@ -141,15 +144,22 @@ const BattlePreparation: React.FC = () => {
       return;
     }
     
-    // Combine selected tasks and parent tasks of selected subtasks
-    const allTaskIds = new Set([
-      ...selectedTaskIds,
-      ...selectedItems.selectedSubtasks.map(st => 
-        tasks.find(t => t.subTasks?.some(s => s.id === st.id))?.id
-      ).filter((id): id is string => id !== undefined)
-    ]);
-    
-    createSession(duration, Array.from(allTaskIds));
+    setShowMeditation(true);
+  };
+  
+  const handleMeditationComplete = () => {
+    setShowMeditation(false);
+    startActualBattle();
+  };
+  
+  const handleSkipMeditation = () => {
+    setShowMeditation(false);
+    startActualBattle();
+  };
+  
+  const startActualBattle = () => {
+    // Use only the selected task IDs in order
+    createSession(duration, selectedTaskIds);
     startBattle();
     clearBattleSelection();
   };
@@ -161,6 +171,15 @@ const BattlePreparation: React.FC = () => {
         selectedSubtaskIds={selectedSubtaskIds}
         onTaskSelect={handleTaskSelect}
         onBack={() => setShowTaskSelection(false)}
+      />
+    );
+  }
+  
+  if (showMeditation) {
+    return (
+      <MeditationScreen
+        onComplete={handleMeditationComplete}
+        onSkip={handleSkipMeditation}
       />
     );
   }
@@ -432,8 +451,7 @@ const BattlePreparation: React.FC = () => {
               <Button
                 onClick={() => {
                   setShowConfirmation(false);
-                  createSession(duration, selectedTaskIds);
-                  startBattle();
+                  setShowMeditation(true);
                 }}
               >
                 Start Anyway
