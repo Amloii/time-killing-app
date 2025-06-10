@@ -38,7 +38,7 @@ const ActiveBattle: React.FC = () => {
   if (!currentTask) {
     return (
       <div className="text-center p-8">
-        <SamuraiMascot mood="victory" size={160} />
+        <SamuraiMascot mood="victory\" size={160} />
         <h2 className="text-2xl font-bold mt-4 mb-2">Battle Complete!</h2>
         <p className="text-gray-600 mb-4">All tasks have been completed.</p>
         <Button onClick={() => endBattle(true)} variant="primary" className="mt-4">
