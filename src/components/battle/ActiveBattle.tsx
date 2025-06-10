@@ -175,8 +175,13 @@ const ActiveBattle: React.FC = () => {
                     {currentTask.title}
                   </h2>
                   {currentTask.description && (
-                    <p className="text-gray-600 text-lg">
+                    <p className="text-gray-600 text-lg leading-relaxed">
                       {currentTask.description}
+                    </p>
+                  )}
+                  {!currentTask.description && (
+                    <p className="text-gray-500 text-base italic">
+                      Focus on completing this task with dedication and mindfulness.
                     </p>
                   )}
                 </div>
