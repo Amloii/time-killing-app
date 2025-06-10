@@ -81,6 +81,40 @@ const ActiveBattle: React.FC = () => {
 
   const pointsRange = getPointsForTimeRange(currentTask.estimatedTime || 30);
   
+  // Motivational messages based on battle progress
+  const getMotivationalMessage = () => {
+    const progress = (currentTaskIndex / currentSession.taskIds.length) * 100;
+    const timeElapsed = Math.floor((Date.now() - battleStartTime) / 60000); // minutes
+    
+    if (progress === 0) {
+      return "Begin with courage!";
+    } else if (progress < 25) {
+      return "Strong start, warrior!";
+    } else if (progress < 50) {
+      return "You're gaining momentum!";
+    } else if (progress < 75) {
+      return "Victory is within reach!";
+    } else {
+      return "Final push to glory!";
+    }
+  };
+  
+  // Task-specific encouragement
+  const getTaskEncouragement = () => {
+    const difficulty = currentTask.difficulty;
+    const estimatedTime = currentTask.estimatedTime || 30;
+    
+    if (difficulty >= 4) {
+      return "🔥 This challenge will forge your strength!";
+    } else if (estimatedTime >= 60) {
+      return "⏰ Patience and persistence lead to mastery!";
+    } else if (currentTask.subTasks && currentTask.subTasks.length > 0) {
+      return "🎯 Break it down, conquer each piece!";
+    } else {
+      return "⚡ Swift and focused - you've got this!";
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 p-4">
       <div className="max-w-4xl mx-auto">
@@ -131,11 +165,33 @@ const ActiveBattle: React.FC = () => {
 
         {/* Main Task Display */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Mascot */}
-          <div className="lg:col-span-1 flex justify-center items-start">
+          {/* Mascot and Stats */}
+          <div className="lg:col-span-1 flex flex-col items-center space-y-6">
+            {/* Motivational Mascot */}
             <div className="text-center">
-              <SamuraiMascot mood="focused" size={160} />
-              <div className="mt-4 p-4 bg-white rounded-lg shadow-md border border-gray-200">
+              <div className="relative">
+                <SamuraiMascot mood="focused" size={160} />
+                
+                {/* Motivational Speech Bubble */}
+                <motion.div
+                  className="absolute -top-4 -right-8 bg-white rounded-lg shadow-lg border border-gray-200 p-3 max-w-xs"
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 0.5 }}
+                >
+                  <div className="text-sm font-medium text-gray-800 mb-1">
+                    {getMotivationalMessage()}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Stay focused, warrior!
+                  </div>
+                  {/* Speech bubble tail */}
+                  <div className="absolute bottom-0 left-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-white border-r border-b border-gray-200"></div>
+                </motion.div>
+              </div>
+              
+              {/* Battle Stats Card */}
+              <div className="mt-6 p-4 bg-white rounded-lg shadow-md border border-gray-200">
                 <h3 className="font-bold text-gray-800 mb-2">Battle Stats</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -152,6 +208,18 @@ const ActiveBattle: React.FC = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Warrior Encouragement */}
+              <motion.div
+                className="mt-4 p-3 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border border-red-100"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 2 }}
+              >
+                <div className="text-xs text-red-700 font-medium text-center">
+                  {getTaskEncouragement()}
+                </div>
+              </motion.div>
             </div>
           </div>
 
