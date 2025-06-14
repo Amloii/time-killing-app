@@ -4,8 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Sparkles, Plus, Save, Trash2, X } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
-import { analyzeTask } from '../../utils/llm/suggestions';
-import { getDefaultSettings } from '../../utils/llm/providers';
+import { analyzeTask } from '../../utils/gemini';
 import { TaskType, SubTask, Task } from '../../types';
 import { toast } from 'sonner';
 
@@ -33,7 +32,12 @@ const TaskChopModal: React.FC<TaskChopModalProps> = ({ task, onClose, onSave }) 
     
     try {
       const taskDescription = `${task.title}${task.description ? ` - ${task.description}` : ''}`;
-      const analyzedTasks = await analyzeTask(taskDescription, userProfile.geminiApiKey);
+      const analyzedTasks = await analyzeTask(
+        taskDescription, 
+        userProfile.llmProvider, 
+        apiKey, 
+        settings
+      );
       setSubTasks(
         analyzedTasks.map(subtask => ({
           ...subtask,
