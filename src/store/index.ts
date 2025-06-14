@@ -34,7 +34,8 @@ interface AppState {
   
   // Settings actions
   updateSettings: (settings: Partial<AppSettings>) => void;
-  updateGeminiApiKey: (apiKey: string) => void;
+  updateLLMProvider: (provider: 'gemini' | 'openai', geminiKey?: string, openaiKey?: string) => void;
+  updateLLMSettings: (settings: LLMSettings) => void;
   
   // Navigation actions
   setActiveTab: (tab: 'tasks' | 'battle') => void;
