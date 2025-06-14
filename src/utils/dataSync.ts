@@ -44,6 +44,7 @@ export class DataSyncService {
       total_tasks_completed: profile.totalTasksCompleted,
       owned_warriors: profile.ownedWarriors,
       active_warrior: profile.activeWarrior,
+      gemini_api_key: profile.geminiApiKey,
     };
   }
 
@@ -58,6 +59,7 @@ export class DataSyncService {
       totalTasksCompleted: dbProfile.total_tasks_completed,
       ownedWarriors: dbProfile.owned_warriors,
       activeWarrior: dbProfile.active_warrior,
+      geminiApiKey: dbProfile.gemini_api_key,
     };
   }
 
@@ -199,6 +201,8 @@ export class DataSyncService {
       totalTasksCompleted: Math.max(local.totalTasksCompleted, cloud.totalTasksCompleted),
       ownedWarriors: [...new Set([...local.ownedWarriors, ...cloud.ownedWarriors])],
       streak: Math.max(local.streak, cloud.streak),
+      // For API key, prefer local if cloud doesn't have one, otherwise use cloud
+      geminiApiKey: cloud.geminiApiKey || local.geminiApiKey,
     };
   }
 

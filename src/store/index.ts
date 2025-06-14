@@ -34,6 +34,7 @@ interface AppState {
   
   // Settings actions
   updateSettings: (settings: Partial<AppSettings>) => void;
+  updateGeminiApiKey: (apiKey: string) => void;
   
   // Navigation actions
   setActiveTab: (tab: 'tasks' | 'battle') => void;
@@ -251,6 +252,26 @@ export const useAppStore = create<AppState>((set, get) => ({
       const updatedSettings = { ...state.settings, ...newSettings };
       saveSettings(updatedSettings);
       return { settings: updatedSettings };
+    });
+  },
+
+  updateGeminiApiKey: (apiKey) => {
+    set((state) => {
+      const updatedProfile: UserProfile = {
+        ...state.userProfile,
+        geminiApiKey: apiKey,
+      };
+      
+      saveUserProfile(updatedProfile);
+      
+      // Sync to cloud if authenticated
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          dataSyncService.updateProfileInCloud(updatedProfile);
+        }
+      });
+      
+      return { userProfile: updatedProfile };
     });
   },
   

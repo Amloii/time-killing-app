@@ -20,10 +20,10 @@ interface TaskChopModalProps {
 const TaskChopModal: React.FC<TaskChopModalProps> = ({ task, onClose, onSave }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [subTasks, setSubTasks] = useState<(Omit<SubTask, 'id'> & { tempId: string })[]>([]);
-  const { settings } = useAppStore();
+  const { userProfile } = useAppStore();
 
   const handleAnalyze = async () => {
-    if (!settings.geminiApiKey) {
+    if (!userProfile.geminiApiKey) {
       toast.error('Please add your Gemini API key in settings');
       return;
     }
@@ -32,7 +32,7 @@ const TaskChopModal: React.FC<TaskChopModalProps> = ({ task, onClose, onSave }) 
     
     try {
       const taskDescription = `${task.title}${task.description ? ` - ${task.description}` : ''}`;
-      const analyzedTasks = await analyzeTask(taskDescription, settings.geminiApiKey);
+      const analyzedTasks = await analyzeTask(taskDescription, userProfile.geminiApiKey);
       setSubTasks(
         analyzedTasks.map(subtask => ({
           ...subtask,

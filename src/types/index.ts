@@ -27,7 +27,6 @@ export interface AppSettings {
   theme: 'light' | 'dark';
   defaultTags: string[];
   keyboardShortcutsEnabled: boolean;
-  geminiApiKey?: string;
 }
 
 export type TaskType = 'Research' | 'Development' | 'Design' | 'Testing' | 'Documentation';
@@ -51,6 +50,7 @@ export interface UserProfile {
   totalTasksCompleted: number;
   ownedWarriors: string[];
   activeWarrior?: string;
+  geminiApiKey?: string;
 }
 
 export type WarriorRarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';

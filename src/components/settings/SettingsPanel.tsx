@@ -8,7 +8,7 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const { settings, updateSettings } = useAppStore();
+  const { settings, updateSettings, userProfile, updateGeminiApiKey } = useAppStore();
   
   const toggleSound = () => {
     updateSettings({ soundEnabled: !settings.soundEnabled });
@@ -26,7 +26,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
   };
   
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateSettings({ geminiApiKey: e.target.value });
+    updateGeminiApiKey(e.target.value);
   };
   
   return (
@@ -85,7 +85,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           <h3 className="text-lg font-medium mb-2">Gemini API Key</h3>
           <input
             type="password"
-            value={settings.geminiApiKey}
+            value={userProfile.geminiApiKey || ''}
             onChange={handleApiKeyChange}
             className="w-full p-2 border border-gray-300 rounded-md"
             placeholder="Enter your Gemini API key"

@@ -20,6 +20,7 @@ export interface DatabaseUserProfile {
   total_tasks_completed: number;
   owned_warriors: string[];
   active_warrior?: string;
+  gemini_api_key?: string;
   created_at: string;
   updated_at: string;
 }

@@ -7,7 +7,7 @@ import { suggestTaskAttributes } from '../../utils/gemini';
 import { toast } from 'sonner';
 
 const CreateTaskForm: React.FC = () => {
-  const { addTask, tasks, settings } = useAppStore();
+  const { addTask, tasks, userProfile } = useAppStore();
   
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -27,6 +27,7 @@ const CreateTaskForm: React.FC = () => {
     }
     
     if (!settings.geminiApiKey) {
+    if (!userProfile.geminiApiKey) {
       toast.error('Please add your Gemini API key in settings');
       return;
     }
@@ -42,7 +43,7 @@ const CreateTaskForm: React.FC = () => {
         title,
         description,
         previousTasks,
-        settings.geminiApiKey
+        userProfile.geminiApiKey
       );
       
       setEstimatedTime(suggestion.estimatedTime);

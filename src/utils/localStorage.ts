@@ -39,7 +39,6 @@ export const getSettings = (): AppSettings => {
         theme: 'light',
         defaultTags: ['Work', 'Personal', 'Urgent', 'Important'],
         keyboardShortcutsEnabled: true,
-        geminiApiKey: '',
       };
 };
 
