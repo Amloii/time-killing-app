@@ -82,15 +82,23 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         </div>
         
         <div>
-          <h3 className="text-lg font-medium mb-2">Gemini API Key</h3>
-          <input
-            type="password"
-            value={userProfile.geminiApiKey || ''}
-            onChange={handleApiKeyChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Enter your Gemini API key"
-          />
-          <p className="text-sm text-gray-500 mt-1">Required for AI task analysis</p>
+          <h3 className="text-lg font-medium mb-2">AI Provider</h3>
+          <div className="mb-2">
+            <div className="text-sm text-gray-600 mb-2">
+              Current: {userProfile.llmProvider ? 
+                (userProfile.llmProvider === 'gemini' ? 'Google Gemini' : 'OpenAI') : 
+                'Not configured'
+              }
+            </div>
+            <Button
+              onClick={() => setShowLLMSetup(true)}
+              variant="secondary"
+              icon={<Brain className="w-5 h-5" />}
+            >
+              Configure AI Provider
+            </Button>
+          </div>
+          <p className="text-sm text-gray-500">Required for AI task analysis and suggestions</p>
         </div>
       </div>
       

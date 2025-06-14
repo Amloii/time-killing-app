@@ -256,11 +256,33 @@ export const useAppStore = create<AppState>((set, get) => ({
     });
   },
 
-  updateGeminiApiKey: (apiKey) => {
+  updateLLMProvider: (provider, geminiKey, openaiKey) => {
     set((state) => {
       const updatedProfile: UserProfile = {
         ...state.userProfile,
-        geminiApiKey: apiKey,
+        llmProvider: provider,
+        geminiApiKey: geminiKey || state.userProfile.geminiApiKey,
+        openaiApiKey: openaiKey || state.userProfile.openaiApiKey,
+      };
+      
+      saveUserProfile(updatedProfile);
+      
+      // Sync to cloud if authenticated
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          dataSyncService.updateProfileInCloud(updatedProfile);
+        }
+      });
+      
+      return { userProfile: updatedProfile };
+    });
+  },
+
+  updateLLMSettings: (llmSettings) => {
+    set((state) => {
+      const updatedProfile: UserProfile = {
+        ...state.userProfile,
+        llmSettings,
       };
       
       saveUserProfile(updatedProfile);

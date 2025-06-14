@@ -21,6 +21,9 @@ export interface DatabaseUserProfile {
   owned_warriors: string[];
   active_warrior?: string;
   gemini_api_key?: string;
+  openai_api_key?: string;
+  llm_provider?: string;
+  llm_settings?: any;
   created_at: string;
   updated_at: string;
 }

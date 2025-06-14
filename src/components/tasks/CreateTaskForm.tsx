@@ -42,7 +42,9 @@ const CreateTaskForm: React.FC = () => {
         title,
         description,
         previousTasks,
-        userProfile.geminiApiKey
+        userProfile.llmProvider,
+        apiKey,
+        settings
       );
       
       setEstimatedTime(suggestion.estimatedTime);

@@ -4,7 +4,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Sparkles, Plus, Save, Trash2, X } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
-import { analyzeTask } from '../../utils/gemini';
+import { analyzeTask } from '../../utils/llm/suggestions';
+import { getDefaultSettings } from '../../utils/llm/providers';
 import { TaskType, SubTask, Task } from '../../types';
 import { toast } from 'sonner';
 

@@ -203,6 +203,9 @@ export class DataSyncService {
       streak: Math.max(local.streak, cloud.streak),
       // For API key, prefer local if cloud doesn't have one, otherwise use cloud
       geminiApiKey: cloud.geminiApiKey || local.geminiApiKey,
+      openaiApiKey: cloud.openaiApiKey || local.openaiApiKey,
+      llmProvider: cloud.llmProvider || local.llmProvider,
+      llmSettings: cloud.llmSettings || local.llmSettings,
     };
   }
 
