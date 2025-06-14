@@ -26,7 +26,6 @@ const CreateTaskForm: React.FC = () => {
       return;
     }
     
-    if (!settings.geminiApiKey) {
     if (!userProfile.geminiApiKey) {
       toast.error('Please add your Gemini API key in settings');
       return;
