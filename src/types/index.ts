@@ -27,7 +27,6 @@ export interface AppSettings {
   theme: 'light' | 'dark';
   defaultTags: string[];
   keyboardShortcutsEnabled: boolean;
-  geminiApiKey?: string;
 }
 
 export type TaskType = 'Research' | 'Development' | 'Design' | 'Testing' | 'Documentation';
@@ -51,6 +50,41 @@ export interface UserProfile {
   totalTasksCompleted: number;
   ownedWarriors: string[];
   activeWarrior?: string;
+  llmProvider?: 'gemini' | 'openai';
+  geminiApiKey?: string;
+  openaiApiKey?: string;
+  llmSettings?: LLMSettings;
+}
+
+export interface LLMSettings {
+  temperature: number;
+  maxTokens: number;
+  model: string;
+  outputFormat: 'json' | 'text';
+  enableUsageMonitoring: boolean;
+}
+
+export interface LLMProvider {
+  id: 'gemini' | 'openai';
+  name: string;
+  models: LLMModel[];
+  maxTokens: number;
+  defaultModel: string;
+}
+
+export interface LLMModel {
+  id: string;
+  name: string;
+  maxTokens: number;
+  costPer1kTokens: number;
+}
+
+export interface LLMUsage {
+  provider: 'gemini' | 'openai';
+  model: string;
+  tokensUsed: number;
+  cost: number;
+  timestamp: string;
 }
 
 export type WarriorRarity = 'Common' | 'Rare' | 'Epic' | 'Legendary';

@@ -8,8 +8,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 100,
     description: 'A young warrior beginning their journey',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/novice_samurai.png',
+    animationUrl: '/novice_samurai.png',
     unlocked: false
   },
   {
@@ -18,8 +18,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 150,
     description: 'Protector of the ancient woods',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/forest_guardian.png',
+    animationUrl: '/forest_guardian.png',
     unlocked: false
   },
   {
@@ -28,8 +28,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 200,
     description: 'Wise warrior from the high peaks',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/mountain_monk.png',
+    animationUrl: '/mountain_monk.png',
     unlocked: false
   },
   
@@ -40,8 +40,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 250,
     description: 'Master of lightning-fast strikes',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/storm_blade.png',
+    animationUrl: '/storm_blade.png',
     unlocked: false
   },
   {
@@ -50,8 +50,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 350,
     description: 'Silent warrior of the night',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/shadow_ninja.png',
+    animationUrl: '/shadow_ninja.png',
     unlocked: false
   },
   {
@@ -60,8 +60,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 400,
     description: 'Wandering warrior with burning spirit',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/fire_ronin.png',
+    animationUrl: '/fire_ronin.png',
     unlocked: false
   },
   
@@ -72,8 +72,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 500,
     description: 'Legendary hunter of ancient beasts',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/dragon_slayer.png',
+    animationUrl: '/dragon_slayer.png',
     unlocked: false
   },
   {
@@ -82,8 +82,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 650,
     description: 'Champion blessed by the heavens',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/celestial_warrior.png',
+    animationUrl: '/celestial_warrior.png',
     unlocked: false
   },
   {
@@ -92,8 +92,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Epic',
     cost: 700,
     description: 'Controller of dark energies',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/void_master.png',
+    animationUrl: '/void_master.png',
     unlocked: false
   },
   
@@ -104,8 +104,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 800,
     description: 'Ultimate ruler of all warriors',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/shogun_supreme.png',
+    animationUrl: '/shogun_supreme.png',
     unlocked: false
   },
   {
@@ -114,9 +114,9 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 1000,
     description: 'Immortal warrior reborn from flames',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
-    unlocked: false
+    imageUrl: '/phoenix_warrior.png',
+    animationUrl: '/phoenix_warrior.png',
+    unlocked: true
   }
 ];
 

@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Sparkles, Plus, Save, Trash2, X } from 'lucide-react';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
-import { analyzeTask } from '../../utils/gemini';
+import { analyzeTask } from '../../utils/llm/suggestions';
 import { TaskType, SubTask, Task } from '../../types';
 import { toast } from 'sonner';
 
@@ -20,11 +20,11 @@ interface TaskChopModalProps {
 const TaskChopModal: React.FC<TaskChopModalProps> = ({ task, onClose, onSave }) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [subTasks, setSubTasks] = useState<(Omit<SubTask, 'id'> & { tempId: string })[]>([]);
-  const { settings } = useAppStore();
+  const { userProfile } = useAppStore();
 
   const handleAnalyze = async () => {
-    if (!settings.geminiApiKey) {
-      toast.error('Please add your Gemini API key in settings');
+    if (!userProfile.llmProvider || (!userProfile.geminiApiKey && !userProfile.openaiApiKey)) {
+      toast.error('Please configure an AI provider in settings');
       return;
     }
 
@@ -32,7 +32,25 @@ const TaskChopModal: React.FC<TaskChopModalProps> = ({ task, onClose, onSave }) 
     
     try {
       const taskDescription = `${task.title}${task.description ? ` - ${task.description}` : ''}`;
-      const analyzedTasks = await analyzeTask(taskDescription, settings.geminiApiKey);
+      
+      const apiKey = userProfile.llmProvider === 'gemini' 
+        ? userProfile.geminiApiKey 
+        : userProfile.openaiApiKey;
+      
+      const settings = userProfile.llmSettings || {
+        temperature: 0.7,
+        maxTokens: 4096,
+        model: userProfile.llmProvider === 'gemini' ? 'gemini-2.0-flash-lite' : 'gpt-4o-mini',
+        outputFormat: 'json' as const,
+        enableUsageMonitoring: true,
+      };
+      
+      const analyzedTasks = await analyzeTask(
+        taskDescription, 
+        userProfile.llmProvider, 
+        apiKey, 
+        settings
+      );
       setSubTasks(
         analyzedTasks.map(subtask => ({
           ...subtask,
