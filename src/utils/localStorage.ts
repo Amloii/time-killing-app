@@ -58,8 +58,6 @@ export const getUserProfile = (): UserProfile => {
         streak: 0,
         totalTasksCompleted: 0,
         ownedWarriors: [],
-        ownedPets: [],
-        warriorPetPairings: {},
       };
 };
 

@@ -1,9 +1,8 @@
 import { create } from 'zustand';
-import { Task, BattleSession, AppSettings, SubTask, UserProfile, PointTransaction, Pet, WarriorPetPair } from '../types';
+import { Task, BattleSession, AppSettings, SubTask, UserProfile, PointTransaction } from '../types';
 import { getTasks, saveTasks, getSessions, saveSessions, getSettings, saveSettings, getUserProfile, saveUserProfile, getTransactions, saveTransactions } from '../utils/localStorage';
 import { calculateTaskPoints } from '../utils/pointsCalculator';
 import { WARRIORS } from '../utils/warriors';
-import { PETS, getCompatiblePets, getPetById } from '../utils/pets';
 
 interface AppState {
   tasks: Task[];
@@ -43,11 +42,7 @@ interface AppState {
   // Gamification actions
   awardPoints: (taskId: string, completedEarly?: boolean) => { pointsBreakdown: any; newStreak: number };
   purchaseWarrior: (warriorId: string) => void;
-  purchasePet: (petId: string) => void;
   setActiveWarrior: (warriorId: string) => void;
-  setActivePet: (petId: string) => void;
-  pairWarriorWithPet: (warriorId: string, petId: string) => void;
-  getActiveWarriorPetPair: () => { warrior: any; pet: Pet | null } | null;
   updateStreak: () => void;
   
   // Battle task selection
@@ -374,98 +369,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ userProfile: updatedProfile });
   },
   
-  purchasePet: (petId) => {
-    const state = get();
-    const pet = PETS.find(p => p.id === petId);
-    if (!pet || state.userProfile.points < pet.cost) return;
-    
-    const transaction: PointTransaction = {
-      id: Date.now().toString(),
-      type: 'spent',
-      amount: pet.cost,
-      reason: `Purchased pet: ${pet.name}`,
-      timestamp: new Date().toISOString(),
-    };
-    
-    const updatedProfile: UserProfile = {
-      ...state.userProfile,
-      points: state.userProfile.points - pet.cost,
-      ownedPets: [...(state.userProfile.ownedPets || []), petId],
-    };
-    
-    const updatedTransactions = [...state.transactions, transaction];
-    
-    saveUserProfile(updatedProfile);
-    saveTransactions(updatedTransactions);
-    
-    set({
-      userProfile: updatedProfile,
-      transactions: updatedTransactions,
-    });
-  },
-
-  setActivePet: (petId) => {
-    const state = get();
-    const pet = getPetById(petId);
-    if (!pet || !(state.userProfile.ownedPets || []).includes(petId)) return;
-    
-    // Check if pet is compatible with current active warrior
-    if (state.userProfile.activeWarrior) {
-      const compatiblePets = getCompatiblePets(state.userProfile.activeWarrior);
-      if (!compatiblePets.some(p => p.id === petId)) {
-        console.warn('Pet is not compatible with current warrior');
-        return;
-      }
-    }
-    
-    const updatedProfile: UserProfile = {
-      ...state.userProfile,
-      activePet: petId,
-    };
-    
-    saveUserProfile(updatedProfile);
-    set({ userProfile: updatedProfile });
-  },
-
-  pairWarriorWithPet: (warriorId, petId) => {
-    const state = get();
-    const warrior = WARRIORS.find(w => w.id === warriorId);
-    const pet = getPetById(petId);
-    
-    if (!warrior || !pet) return;
-    if (!state.userProfile.ownedWarriors.includes(warriorId)) return;
-    if (!(state.userProfile.ownedPets || []).includes(petId)) return;
-    
-    // Check compatibility
-    if (!pet.compatibleWarriors.includes(warriorId)) {
-      console.warn('Warrior and pet are not compatible');
-      return;
-    }
-    
-    const updatedProfile: UserProfile = {
-      ...state.userProfile,
-      activeWarrior: warriorId,
-      activePet: petId,
-      warriorPetPairings: {
-        ...state.userProfile.warriorPetPairings,
-        [warriorId]: petId,
-      },
-    };
-    
-    saveUserProfile(updatedProfile);
-    set({ userProfile: updatedProfile });
-  },
-
-  getActiveWarriorPetPair: () => {
-    const state = get();
-    if (!state.userProfile.activeWarrior) return null;
-    
-    const warrior = WARRIORS.find(w => w.id === state.userProfile.activeWarrior);
-    const petId = state.userProfile.activePet || state.userProfile.warriorPetPairings?.[state.userProfile.activeWarrior];
-    const pet = petId ? getPetById(petId) : null;
-    
-    return warrior ? { warrior, pet } : null;
-  },
   // Battle task selection
   addToBattleSelection: (taskId) => {
     set((state) => ({
