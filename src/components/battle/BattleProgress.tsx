@@ -6,6 +6,7 @@ import PointsDisplay from '../common/PointsDisplay';
 
 interface BattleProgressProps {
   completedTasks: string[];
+  completedSubtasks: string[];
   totalTasks: number;
   pointsEarned: number;
   timeElapsed: number;
@@ -13,6 +14,7 @@ interface BattleProgressProps {
 
 const BattleProgress: React.FC<BattleProgressProps> = ({
   completedTasks,
+  completedSubtasks,
   totalTasks,
   pointsEarned,
   timeElapsed
@@ -48,13 +50,13 @@ const BattleProgress: React.FC<BattleProgressProps> = ({
         </div>
         
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-600">+{pointsEarned}</div>
-          <div className="text-sm text-gray-600">Points Earned</div>
+          <div className="text-2xl font-bold text-purple-600">{completedSubtasks.length}</div>
+          <div className="text-sm text-gray-600">Subtasks Completed</div>
         </div>
         
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600">{formatTime(timeElapsed)}</div>
-          <div className="text-sm text-gray-600">Time Elapsed</div>
+          <div className="text-2xl font-bold text-green-600">+{pointsEarned}</div>
+          <div className="text-sm text-gray-600">Points Earned</div>
         </div>
         
         <div className="text-center">

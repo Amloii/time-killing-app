@@ -8,20 +8,27 @@ interface TaskVerificationProps {
   task: Task;
   onVerify: (taskId: string, verified: boolean, notes?: string) => void;
   onCancel: () => void;
+  subtaskId?: string;
 }
 
 const TaskVerification: React.FC<TaskVerificationProps> = ({
   task,
   onVerify,
   onCancel
+  subtaskId
 }) => {
   const [notes, setNotes] = useState('');
   const [showNotes, setShowNotes] = useState(false);
   
+  const isSubtask = !!subtaskId;
+  const subtask = isSubtask ? task.subTasks?.find(st => st.id === subtaskId) : null;
+  const itemTitle = isSubtask ? subtask?.summary : task.title;
+  const itemType = isSubtask ? 'Subtask' : 'Task';
+  
   const verificationQuestions = [
-    "Did you complete all the main objectives of this task?",
+    `Did you complete all the main objectives of this ${itemType.toLowerCase()}?`,
     "Are you satisfied with the quality of work done?",
-    "Would you consider this task fully finished?",
+    `Would you consider this ${itemType.toLowerCase()} fully finished?`,
   ];
   
   const handleVerify = (verified: boolean) => {
@@ -39,8 +46,11 @@ const TaskVerification: React.FC<TaskVerificationProps> = ({
           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
             <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 px-2">Verify Task Completion</h2>
-          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base px-2 break-words">"{task.title}"</p>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 px-2">Verify {itemType} Completion</h2>
+          <p className="text-gray-600 mt-1 sm:mt-2 text-sm sm:text-base px-2 break-words">"{itemTitle}"</p>
+          {isSubtask && (
+            <p className="text-gray-500 mt-1 text-xs sm:text-sm px-2">From task: "{task.title}"</p>
+          )}
         </div>
         
         <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
@@ -71,7 +81,7 @@ const TaskVerification: React.FC<TaskVerificationProps> = ({
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add any notes about what you accomplished..."
+                placeholder={`Add any notes about what you accomplished in this ${itemType.toLowerCase()}...`}
                 className="mt-2 w-full p-2 sm:p-3 border border-gray-300 rounded-lg resize-none text-sm sm:text-base"
                 rows={2}
               />
