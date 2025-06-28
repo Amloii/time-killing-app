@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Home, BarChart2, List, Trophy, Zap } from 'lucide-react';
+import { Home, BarChart2, List, Trophy, Zap, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PointsDisplay from '../common/PointsDisplay';
 import SettingsPanel from '../settings/SettingsPanel';
@@ -45,7 +45,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <User className="w-5 h-5 text-red-600" />
               </div>
             </button>
-            />
           </div>
         </div>
       </header>
