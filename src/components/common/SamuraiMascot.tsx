@@ -184,13 +184,6 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({
         <div className="absolute top-1/4 right-6 text-red-400 text-lg opacity-50 transform -rotate-30">🍁</div>
         
         {/* Active Warrior Name Display */}
-        {useActiveWarrior && activeWarrior && (
-          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center">
-            <div className="bg-white bg-opacity-90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg border border-gray-200">
-              <span className="text-xs font-medium text-gray-800">{activeWarrior.name}</span>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
