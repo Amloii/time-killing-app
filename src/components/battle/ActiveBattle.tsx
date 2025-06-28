@@ -397,7 +397,9 @@ const ActiveBattle: React.FC = () => {
             onCancel={() => {
               setShowVerification(false);
               setTaskToVerify(null);
+              setSubtaskToVerify(null);
             }}
+            subtaskId={subtaskToVerify || undefined}
           />
         )}
       </div>
