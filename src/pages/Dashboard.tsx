@@ -207,21 +207,6 @@ const Dashboard: React.FC = () => {
         pointsBreakdown={pointsNotification}
         onClose={() => setPointsNotification(null)}
       />
-      
-      {/* Built with Bolt.new Badge */}
-      <div className="fixed bottom-20 right-4 z-10">
-        <a
-          href="https://bolt.new"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center px-3 py-2 bg-white bg-opacity-90 backdrop-blur-sm border border-gray-200 rounded-full shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-sm text-gray-600 hover:text-gray-800"
-        >
-          <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
-          </svg>
-          Built with Bolt.new
-        </a>
-      </div>
     </div>
   );
 };
