@@ -57,7 +57,8 @@ export const getUserProfile = (): UserProfile => {
         level: 0,
         streak: 0,
         totalTasksCompleted: 0,
-        ownedWarriors: [],
+        ownedWarriors: ['novice'],
+        activeWarrior: 'novice',
       };
 };
 

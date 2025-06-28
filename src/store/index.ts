@@ -430,7 +430,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       ...state.userProfile,
       points: state.userProfile.points - warrior.cost,
       ownedWarriors: [...state.userProfile.ownedWarriors, warriorId],
-      activeWarrior: state.userProfile.ownedWarriors.length === 0 ? warriorId : state.userProfile.activeWarrior,
+      activeWarrior: !state.userProfile.activeWarrior ? warriorId : state.userProfile.activeWarrior,
     };
     
     const updatedTransactions = [...state.transactions, transaction];

@@ -8,9 +8,9 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 0,
     description: 'A young person with no journey, yet',
-    imageUrl: '/novice.png',
-    animationUrl: '/novice.png',
-    unlocked: false
+    imageUrl: '/0609.gif',
+    animationUrl: '/0609.gif',
+    unlocked: true
   },
   {
     id: 'samurai-novice',
