@@ -8,8 +8,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Common',
     cost: 0,
     description: 'A young person with no journey, yet',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
+    imageUrl: '/novice.png',
+    animationUrl: '/novice.png',
     unlocked: true
   },
   {
