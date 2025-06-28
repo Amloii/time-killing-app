@@ -58,9 +58,16 @@ const ActiveBattle: React.FC = () => {
   };
   
   const handleCompleteSubtask = (taskId: string, subtaskId: string) => {
-    setTaskToVerify(taskId);
-    setSubtaskToVerify(subtaskId);
-    setShowVerification(true);
+    // Complete subtask immediately without verification
+    const result = awardSubTaskPoints(taskId, subtaskId);
+    completeSubTask(taskId, subtaskId);
+    setCompletedSubtasks(prev => [...prev, subtaskId]);
+    
+    if (result.pointsBreakdown) {
+      setPointsEarned(prev => prev + result.pointsBreakdown.total);
+      const subtask = currentTask.subTasks?.find(st => st.id === subtaskId);
+      toast.success(`Subtask "${subtask?.summary}" completed! +${result.pointsBreakdown.total} points earned!`);
+    }
   };
   
   const handleTaskVerification = (taskId: string, verified: boolean, notes?: string) => {
@@ -68,41 +75,25 @@ const ActiveBattle: React.FC = () => {
     setTaskToVerify(null);
     
     if (verified) {
-      if (subtaskToVerify) {
-        // Complete subtask
-        const result = awardSubTaskPoints(taskId, subtaskToVerify);
-        completeSubTask(taskId, subtaskToVerify);
-        setCompletedSubtasks(prev => [...prev, subtaskToVerify]);
-        
-        if (result.pointsBreakdown) {
-          setPointsEarned(prev => prev + result.pointsBreakdown.total);
-          const subtask = currentTask.subTasks?.find(st => st.id === subtaskToVerify);
-          toast.success(`Subtask "${subtask?.summary}" completed! +${result.pointsBreakdown.total} points earned!`);
-        }
+      // Complete full task only (subtasks are handled immediately)
+      const result = awardPoints(taskId);
+      completeTask(taskId);
+      setCompletedTasks(prev => [...prev, taskId]);
+      
+      if (result.pointsBreakdown) {
+        setPointsEarned(prev => prev + result.pointsBreakdown.total);
+        toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
+      }
+      
+      // Move to next task or end battle
+      if (isLastTask) {
+        setTimeout(() => endBattle(true), 1500);
       } else {
-        // Complete full task
-        const result = awardPoints(taskId);
-        completeTask(taskId);
-        setCompletedTasks(prev => [...prev, taskId]);
-        
-        if (result.pointsBreakdown) {
-          setPointsEarned(prev => prev + result.pointsBreakdown.total);
-          toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
-        }
-        
-        // Move to next task or end battle
-        if (isLastTask) {
-          setTimeout(() => endBattle(true), 1500);
-        } else {
-          setTimeout(() => nextTask(), 1000);
-        }
+        setTimeout(() => nextTask(), 1000);
       }
     } else {
-      toast.info(subtaskToVerify ? 'Continue working on this subtask' : 'Continue working on this task');
+      toast.info('Continue working on this task');
     }
-    
-    setTaskToVerify(null);
-    setSubtaskToVerify(null);
   };
 
   const pointsRange = getPointsForTimeRange(currentTask.estimatedTime || 30);
@@ -317,18 +308,50 @@ const ActiveBattle: React.FC = () => {
                     <h3 className="text-lg font-semibold mb-4 text-gray-800">Subtasks:</h3>
                     <div className="space-y-3">
                       {currentTask.subTasks.map((subtask, index) => (
-                        <div key={subtask.id} className="flex items-start p-3 bg-gray-50 rounded-lg">
+                        <div key={subtask.id} className={`flex items-start p-3 rounded-lg ${
+                          completedSubtasks.includes(subtask.id) 
+                            ? 'bg-green-50 border border-green-200' 
+                            : 'bg-gray-50'
+                        }`}>
                           <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium text-gray-800">{subtask.summary}</div>
-                            <div className="text-sm text-gray-600 mt-1">{subtask.description}</div>
+                            <div className={`font-medium ${
+                              completedSubtasks.includes(subtask.id) 
+                                ? 'text-green-800 line-through' 
+                                : 'text-gray-800'
+                            }`}>
+                              {subtask.summary}
+                            </div>
+                            <div className={`text-sm mt-1 ${
+                              completedSubtasks.includes(subtask.id) 
+                                ? 'text-green-600 line-through' 
+                                : 'text-gray-600'
+                            }`}>
+                              {subtask.description}
+                            </div>
                             <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                               <span>{subtask.estimatedTime} min</span>
                               <span>{subtask.type}</span>
                               <span>{'★'.repeat(subtask.difficulty)}</span>
                             </div>
+                          </div>
+                          <div className="ml-3">
+                            {completedSubtasks.includes(subtask.id) ? (
+                              <div className="flex items-center text-green-600 font-medium text-sm">
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                                Completed
+                              </div>
+                            ) : (
+                              <Button
+                                onClick={() => handleCompleteSubtask(currentTask.id, subtask.id)}
+                                size="sm"
+                                icon={<CheckCircle className="w-4 h-4" />}
+                              >
+                                Complete
+                              </Button>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -397,9 +420,7 @@ const ActiveBattle: React.FC = () => {
             onCancel={() => {
               setShowVerification(false);
               setTaskToVerify(null);
-              setSubtaskToVerify(null);
             }}
-            subtaskId={subtaskToVerify || undefined}
           />
         )}
       </div>
