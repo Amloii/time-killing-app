@@ -104,8 +104,8 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 800,
     description: 'Ultimate ruler of all warriors',
-    imageUrl: '/void_master.png',
-    animationUrl: '/0609.gif',
+    imageUrl: '/shogun_supreme.png',
+    animationUrl: '/shogun_supreme.png',
     unlocked: false
   },
   {
