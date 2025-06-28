@@ -50,6 +50,8 @@ export interface UserProfile {
   totalTasksCompleted: number;
   ownedWarriors: string[];
   activeWarrior?: string;
+  activePet?: string;
+  warriorPetPairings: { [warriorId: string]: string }; // warrior ID -> pet ID mapping
   llmProvider?: 'gemini' | 'openai';
   geminiApiKey?: string;
   openaiApiKey?: string;
@@ -107,4 +109,24 @@ export interface PointTransaction {
   reason: string;
   taskId?: string;
   timestamp: string;
+}
+
+export interface Pet {
+  id: string;
+  name: string;
+  type: 'Dragon' | 'Phoenix' | 'Tiger' | 'Wolf' | 'Eagle' | 'Turtle';
+  rarity: WarriorRarity;
+  cost: number;
+  description: string;
+  imageUrl: string;
+  animationUrl: string;
+  abilities: string[];
+  compatibleWarriors: string[]; // warrior IDs this pet can pair with
+}
+
+export interface WarriorPetPair {
+  warriorId: string;
+  petId: string;
+  bondLevel: number; // 1-5, affects battle bonuses
+  unlockedAt: string;
 }
