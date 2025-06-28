@@ -6,7 +6,7 @@ export const WARRIORS: Warrior[] = [
     id: 'novice',
     name: 'Novice',
     rarity: 'Common',
-    cost: 100,
+    cost: 0,
     description: 'A young person with no journey, yet',
     imageUrl: '/novice.png',
     animationUrl: '/novice.png',
