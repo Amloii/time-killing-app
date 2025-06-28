@@ -114,9 +114,9 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Legendary',
     cost: 1000,
     description: 'Immortal warrior reborn from flames',
-    imageUrl: '/0609.gif',
-    animationUrl: '/0609.gif',
-    unlocked: false
+    imageUrl: '/phoenix_warrior.png',
+    animationUrl: '/phoenix_warrior.png',
+    unlocked: true
   }
 ];
 
