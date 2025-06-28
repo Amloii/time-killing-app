@@ -49,6 +49,7 @@ export interface UserProfile {
   lastCompletionDate?: string;
   totalTasksCompleted: number;
   ownedWarriors: string[];
+  ownedPets?: string[];
   activeWarrior?: string;
   activePet?: string;
   warriorPetPairings: { [warriorId: string]: string }; // warrior ID -> pet ID mapping

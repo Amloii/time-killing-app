@@ -7,6 +7,7 @@ import BattleTimer from './BattleTimer';
 import TaskVerification from './TaskVerification';
 import Button from '../common/Button';
 import SamuraiMascot from '../common/SamuraiMascot';
+import WarriorPetDisplay from '../common/WarriorPetDisplay';
 import { toast } from 'sonner';
 import { getPointsForTimeRange } from '../../utils/pointsCalculator';
 
@@ -193,6 +194,13 @@ const ActiveBattle: React.FC = () => {
               {/* Battle Stats Card */}
               <div className="mt-6 p-4 bg-white rounded-lg shadow-md border border-gray-200">
                 <h3 className="font-bold text-gray-800 mb-2">Battle Stats</h3>
+                
+                {/* Active Warrior-Pet Pair */}
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-600 mb-2">Active Team</div>
+                  <WarriorPetDisplay size="sm" showNames={false} />
+                </div>
+                
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Completed:</span>

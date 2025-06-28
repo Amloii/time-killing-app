@@ -4,6 +4,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { Home, BarChart2, List, Trophy, Zap, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PointsDisplay from '../common/PointsDisplay';
+import WarriorPetDisplay from '../common/WarriorPetDisplay';
 import SettingsPanel from '../settings/SettingsPanel';
 
 interface LayoutProps {
@@ -37,6 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <PointsDisplay showProgress={false} size="md" />
+            <WarriorPetDisplay size="sm" showNames={false} />
             <button
               onClick={() => setShowSettings(true)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
