@@ -16,7 +16,9 @@ const ActiveBattle: React.FC = () => {
     currentSession, 
     currentTaskIndex, 
     completeTask,
+    completeSubTask,
     awardPoints,
+    awardSubTaskPoints,
     nextTask, 
     endBattle,
     userProfile
@@ -24,7 +26,9 @@ const ActiveBattle: React.FC = () => {
   
   const [showVerification, setShowVerification] = useState(false);
   const [taskToVerify, setTaskToVerify] = useState<string | null>(null);
+  const [subtaskToVerify, setSubtaskToVerify] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [completedSubtasks, setCompletedSubtasks] = useState<string[]>([]);
   const [pointsEarned, setPointsEarned] = useState(0);
   const [battleStartTime] = useState(Date.now());
   
@@ -53,30 +57,52 @@ const ActiveBattle: React.FC = () => {
     setShowVerification(true);
   };
   
+  const handleCompleteSubtask = (taskId: string, subtaskId: string) => {
+    setTaskToVerify(taskId);
+    setSubtaskToVerify(subtaskId);
+    setShowVerification(true);
+  };
+  
   const handleTaskVerification = (taskId: string, verified: boolean, notes?: string) => {
     setShowVerification(false);
     setTaskToVerify(null);
     
     if (verified) {
-      // Award points for task completion
-      const result = awardPoints(taskId);
-      completeTask(taskId);
-      setCompletedTasks(prev => [...prev, taskId]);
-      
-      if (result.pointsBreakdown) {
-        setPointsEarned(prev => prev + result.pointsBreakdown.total);
-        toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
-      }
-      
-      // Move to next task or end battle
-      if (isLastTask) {
-        setTimeout(() => endBattle(true), 1500);
+      if (subtaskToVerify) {
+        // Complete subtask
+        const result = awardSubTaskPoints(taskId, subtaskToVerify);
+        completeSubTask(taskId, subtaskToVerify);
+        setCompletedSubtasks(prev => [...prev, subtaskToVerify]);
+        
+        if (result.pointsBreakdown) {
+          setPointsEarned(prev => prev + result.pointsBreakdown.total);
+          const subtask = currentTask.subTasks?.find(st => st.id === subtaskToVerify);
+          toast.success(`Subtask "${subtask?.summary}" completed! +${result.pointsBreakdown.total} points earned!`);
+        }
       } else {
-        setTimeout(() => nextTask(), 1000);
+        // Complete full task
+        const result = awardPoints(taskId);
+        completeTask(taskId);
+        setCompletedTasks(prev => [...prev, taskId]);
+        
+        if (result.pointsBreakdown) {
+          setPointsEarned(prev => prev + result.pointsBreakdown.total);
+          toast.success(`Task completed! +${result.pointsBreakdown.total} points earned!`);
+        }
+        
+        // Move to next task or end battle
+        if (isLastTask) {
+          setTimeout(() => endBattle(true), 1500);
+        } else {
+          setTimeout(() => nextTask(), 1000);
+        }
       }
     } else {
-      toast.info('Continue working on this task');
+      toast.info(subtaskToVerify ? 'Continue working on this subtask' : 'Continue working on this task');
     }
+    
+    setTaskToVerify(null);
+    setSubtaskToVerify(null);
   };
 
   const pointsRange = getPointsForTimeRange(currentTask.estimatedTime || 30);

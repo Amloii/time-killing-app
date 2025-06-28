@@ -21,6 +21,7 @@ interface AppState {
   updateTask: (taskId: string, updates: Partial<Task>) => void;
   completeTask: (taskId: string) => void;
   deleteTask: (taskId: string) => void;
+  completeSubTask: (taskId: string, subtaskId: string) => void;
   
   // Session actions
   createSession: (duration: number, taskIds: string[]) => void;
@@ -41,6 +42,7 @@ interface AppState {
   
   // Gamification actions
   awardPoints: (taskId: string, completedEarly?: boolean) => { pointsBreakdown: any; newStreak: number };
+  awardSubTaskPoints: (taskId: string, subtaskId: string) => { pointsBreakdown: any; newStreak: number };
   purchaseWarrior: (warriorId: string) => void;
   setActiveWarrior: (warriorId: string) => void;
   updateStreak: () => void;
@@ -97,6 +99,25 @@ export const useAppStore = create<AppState>((set, get) => ({
           ? { ...task, completed: true, completedAt: new Date().toISOString() } 
           : task
       );
+      saveTasks(updatedTasks);
+      
+      return { tasks: updatedTasks };
+    });
+  },
+  
+  completeSubTask: (taskId, subtaskId) => {
+    set((state) => {
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id === taskId && task.subTasks) {
+          const updatedSubTasks = task.subTasks.map((subtask) =>
+            subtask.id === subtaskId
+              ? { ...subtask, completed: true, completedAt: new Date().toISOString() }
+              : subtask
+          );
+          return { ...task, subTasks: updatedSubTasks };
+        }
+        return task;
+      });
       saveTasks(updatedTasks);
       
       return { tasks: updatedTasks };
@@ -299,6 +320,74 @@ export const useAppStore = create<AppState>((set, get) => ({
       type: 'earned',
       amount: pointsBreakdown.total,
       reason: `Completed task: ${task.title}`,
+      taskId: task.id,
+      timestamp: new Date().toISOString(),
+    };
+    
+    const updatedProfile: UserProfile = {
+      ...state.userProfile,
+      points: state.userProfile.points + pointsBreakdown.total,
+      streak: newStreak,
+      lastCompletionDate: today,
+      totalTasksCompleted: state.userProfile.totalTasksCompleted + 1,
+    };
+    
+    const updatedTransactions = [...state.transactions, transaction];
+    
+    saveUserProfile(updatedProfile);
+    saveTransactions(updatedTransactions);
+    
+    set({
+      userProfile: updatedProfile,
+      transactions: updatedTransactions,
+    });
+    
+    return { pointsBreakdown, newStreak };
+  },
+  
+  awardSubTaskPoints: (taskId, subtaskId) => {
+    const state = get();
+    const task = state.tasks.find(t => t.id === taskId);
+    const subtask = task?.subTasks?.find(st => st.id === subtaskId);
+    if (!task || !subtask) return { pointsBreakdown: null, newStreak: 0 };
+    
+    // Create a temporary task object for subtask to calculate points
+    const subtaskAsTask: Task = {
+      id: subtask.id,
+      title: subtask.summary,
+      description: subtask.description,
+      estimatedTime: subtask.estimatedTime,
+      difficulty: subtask.difficulty,
+      completed: false,
+      createdAt: new Date().toISOString(),
+    };
+    
+    // Update streak
+    const today = new Date().toDateString();
+    const lastCompletion = state.userProfile.lastCompletionDate;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    let newStreak = 1;
+    if (lastCompletion) {
+      const lastDate = new Date(lastCompletion).toDateString();
+      if (lastDate === today) {
+        // Already completed today, don't update streak
+        newStreak = state.userProfile.streak;
+      } else if (lastDate === yesterday.toDateString()) {
+        // Consecutive day
+        newStreak = state.userProfile.streak + 1;
+      }
+    }
+    
+    const pointsBreakdown = calculateTaskPoints(subtaskAsTask, false, newStreak);
+    
+    // Create transaction
+    const transaction: PointTransaction = {
+      id: Date.now().toString(),
+      type: 'earned',
+      amount: pointsBreakdown.total,
+      reason: `Completed subtask: ${subtask.summary}`,
       taskId: task.id,
       timestamp: new Date().toISOString(),
     };

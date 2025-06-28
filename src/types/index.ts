@@ -39,6 +39,8 @@ export interface SubTask {
   difficulty: 1 | 2 | 3 | 4 | 5;
   type: TaskType;
   parentTaskId?: string;
+  completed?: boolean;
+  completedAt?: string;
 }
 
 export interface UserProfile {
