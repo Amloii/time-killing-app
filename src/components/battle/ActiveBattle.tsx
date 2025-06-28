@@ -225,6 +225,10 @@ const ActiveBattle: React.FC = () => {
                     <span className="font-bold text-green-600">{completedTasks.length}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-gray-600">Subtasks:</span>
+                    <span className="font-bold text-purple-600">{completedSubtasks.length}</span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-gray-600">Remaining:</span>
                     <span className="font-bold text-blue-600">{currentSession.taskIds.length - currentTaskIndex}</span>
                   </div>
@@ -393,9 +397,7 @@ const ActiveBattle: React.FC = () => {
             onCancel={() => {
               setShowVerification(false);
               setTaskToVerify(null);
-              setSubtaskToVerify(null);
             }}
-            subtaskId={subtaskToVerify || undefined}
           />
         )}
       </div>
