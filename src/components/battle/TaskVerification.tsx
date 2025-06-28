@@ -14,7 +14,7 @@ interface TaskVerificationProps {
 const TaskVerification: React.FC<TaskVerificationProps> = ({
   task,
   onVerify,
-  onCancel
+  onCancel,
   subtaskId
 }) => {
   const [notes, setNotes] = useState('');
