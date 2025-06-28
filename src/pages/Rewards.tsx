@@ -88,7 +88,7 @@ const Rewards: React.FC = () => {
           {/* Show victory mascot if user has warriors */}
           {ownedWarriors.length > 0 && (
             <div className="flex justify-center">
-              <SamuraiMascot mood="victory" size={140} />
+              <SamuraiMascot mood="victory" size={140} useActiveWarrior={true} />
             </div>
           )}
         </div>

@@ -156,7 +156,7 @@ const MeditationScreen: React.FC<MeditationScreenProps> = ({ onComplete, onSkip 
           >
             <div className="text-center mb-8">
               <div className="flex justify-center mb-6">
-                <SamuraiMascot mood="focused" size={120} />
+                <SamuraiMascot mood="focused" size={120} useActiveWarrior={true} />
               </div>
               
               <div className="mb-6">

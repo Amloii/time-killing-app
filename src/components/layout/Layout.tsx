@@ -5,6 +5,8 @@ import { Home, BarChart2, List, Trophy, Zap, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PointsDisplay from '../common/PointsDisplay';
 import SettingsPanel from '../settings/SettingsPanel';
+import { useAppStore } from '../../store';
+import { WARRIORS } from '../../utils/warriors';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,6 +15,12 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
+  const { userProfile } = useAppStore();
+  
+  // Get active warrior for profile display
+  const activeWarrior = userProfile.activeWarrior 
+    ? WARRIORS.find(w => w.id === userProfile.activeWarrior)
+    : null;
   
   const navItems = [
     { path: '/dashboard/battle', icon: Zap, label: 'Battle' },
@@ -41,8 +49,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               onClick={() => setShowSettings(true)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-red-600" />
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center overflow-hidden border-2 border-red-200">
+                {activeWarrior ? (
+                  <img
+                    src={activeWarrior.imageUrl}
+                    alt={activeWarrior.name}
+                    className="w-full h-full object-cover"
+                    style={{ imageRendering: 'pixelated' }}
+                    onError={(e) => {
+                      // Fallback to default icon if warrior image fails
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>';
+                      }
+                    }}
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-red-600" />
+                )}
               </div>
             </button>
           </div>

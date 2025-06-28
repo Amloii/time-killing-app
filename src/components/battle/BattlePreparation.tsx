@@ -204,7 +204,7 @@ const BattlePreparation: React.FC = () => {
       </div>
       
       <div className="mb-12 flex justify-center">
-        <SamuraiMascot mood="ready" size={180} />
+        <SamuraiMascot mood="ready" size={180} useActiveWarrior={true} />
       </div>
       
       <div className="mb-8 bg-white rounded-lg shadow-md border border-gray-200">

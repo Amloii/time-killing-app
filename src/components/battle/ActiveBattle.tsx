@@ -170,7 +170,7 @@ const ActiveBattle: React.FC = () => {
             {/* Motivational Mascot */}
             <div className="text-center">
               <div className="relative">
-                <SamuraiMascot mood="focused" size={160} />
+                <SamuraiMascot mood="focused" size={160} useActiveWarrior={true} />
                 
                 {/* Motivational Speech Bubble */}
                 <motion.div

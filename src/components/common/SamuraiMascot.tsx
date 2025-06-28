@@ -1,11 +1,29 @@
 import React from 'react';
+import { useAppStore } from '../../store';
+import { WARRIORS } from '../../utils/warriors';
 
 interface SamuraiMascotProps {
   mood?: 'ready' | 'focused' | 'victory' | 'defeat';
   size?: number;
+  useActiveWarrior?: boolean;
 }
 
-const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood = 'ready', size = 200 }) => {
+const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ 
+  mood = 'ready', 
+  size = 200, 
+  useActiveWarrior = false 
+}) => {
+  const { userProfile } = useAppStore();
+  
+  // Get the active warrior or use default
+  const activeWarrior = useActiveWarrior && userProfile.activeWarrior 
+    ? WARRIORS.find(w => w.id === userProfile.activeWarrior)
+    : null;
+  
+  // Use warrior image if available, otherwise default GIF
+  const imageSource = activeWarrior?.imageUrl || "/0609.gif";
+  const altText = activeWarrior?.name || "Warrior Mascot";
+  
   // Mood-based styling
   const moodConfig = {
     ready: { 
@@ -95,12 +113,19 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood = 'ready', size = 20
             
             {/* Warrior GIF */}
             <img
-              src="/0609.gif"
-              alt="Warrior Mascot"
+              src={imageSource}
+              alt={altText}
               className="w-full h-full object-cover relative z-10"
               style={{ 
                 imageRendering: 'pixelated',
                 filter: mood === 'defeat' ? 'grayscale(50%)' : 'none'
+              }}
+              onError={(e) => {
+                // Fallback to default GIF if warrior image fails to load
+                const target = e.target as HTMLImageElement;
+                if (target.src !== "/0609.gif") {
+                  target.src = "/0609.gif";
+                }
               }}
             />
             
@@ -146,7 +171,7 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood = 'ready', size = 20
               mood === 'defeat' ? 'bg-gray-500' : 'bg-green-500'
             }`}
           >
-            {currentMood.label}
+            {activeWarrior?.name || currentMood.label}
           </div>
         </div>
         
@@ -157,6 +182,15 @@ const SamuraiMascot: React.FC<SamuraiMascotProps> = ({ mood = 'ready', size = 20
         {/* Japanese Maple Leaves */}
         <div className="absolute top-3/4 left-6 text-red-400 text-lg opacity-50 transform rotate-30">🍁</div>
         <div className="absolute top-1/4 right-6 text-red-400 text-lg opacity-50 transform -rotate-30">🍁</div>
+        
+        {/* Active Warrior Name Display */}
+        {useActiveWarrior && activeWarrior && (
+          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center">
+            <div className="bg-white bg-opacity-90 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg border border-gray-200">
+              <span className="text-xs font-medium text-gray-800">{activeWarrior.name}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
