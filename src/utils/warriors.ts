@@ -3,6 +3,16 @@ import { Warrior, WarriorRarity } from '../types';
 export const WARRIORS: Warrior[] = [
   // Common Warriors (100-200 points)
   {
+    id: 'novice',
+    name: 'Novice',
+    rarity: 'Common',
+    cost: 100,
+    description: 'A young person with no journey, yet',
+    imageUrl: '/novice.png',
+    animationUrl: '/novice.png',
+    unlocked: false
+  },
+  {
     id: 'samurai-novice',
     name: 'Novice Samurai',
     rarity: 'Common',
