@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Volume2, Volume, Eye, EyeOff, Brain } from 'lucide-react';
+import { Settings, Volume2, Volume, Eye, EyeOff, Brain, User } from 'lucide-react';
 import { useAppStore } from '../../store';
 import Button from '../common/Button';
 import LLMProviderSetup from './LLMProviderSetup';
@@ -9,7 +9,7 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const { settings, updateSettings, userProfile, updateGeminiApiKey } = useAppStore();
+  const { settings, updateSettings, userProfile, updateLLMProvider } = useAppStore();
   const [showLLMSetup, setShowLLMSetup] = useState(false);
   
   const toggleSound = () => {
@@ -25,10 +25,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     if (!isNaN(value) && value > 0) {
       updateSettings({ defaultSessionDuration: value });
     }
-  };
-  
-  const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateGeminiApiKey(e.target.value);
   };
   
   return (
@@ -102,6 +98,19 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
               </Button>
             </div>
             <p className="text-sm text-gray-500">Required for AI task analysis and suggestions</p>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-medium mb-2">User Profile</h3>
+            <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <User className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <div className="font-medium text-gray-900">Local User</div>
+                <div className="text-sm text-gray-500">All data stored locally</div>
+              </div>
+            </div>
           </div>
         </div>
         

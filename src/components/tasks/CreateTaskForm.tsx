@@ -3,7 +3,7 @@ import { PlusCircle, Clock, Star, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../common/Button';
 import { useAppStore } from '../../store';
-import { suggestTaskAttributes } from '../../utils/gemini';
+import { suggestTaskAttributes } from '../../utils/llm/suggestions';
 import { toast } from 'sonner';
 
 const CreateTaskForm: React.FC = () => {
@@ -26,8 +26,8 @@ const CreateTaskForm: React.FC = () => {
       return;
     }
     
-    if (!userProfile.geminiApiKey) {
-      toast.error('Please add your Gemini API key in settings');
+    if (!userProfile.llmProvider || (!userProfile.geminiApiKey && !userProfile.openaiApiKey)) {
+      toast.error('Please configure an AI provider in settings');
       return;
     }
     
@@ -37,6 +37,18 @@ const CreateTaskForm: React.FC = () => {
       const previousTasks = tasks
         .filter(task => task.estimatedTime && !task.completed)
         .slice(-5);
+      
+      const apiKey = userProfile.llmProvider === 'gemini' 
+        ? userProfile.geminiApiKey 
+        : userProfile.openaiApiKey;
+      
+      const settings = userProfile.llmSettings || {
+        temperature: 0.7,
+        maxTokens: 4096,
+        model: userProfile.llmProvider === 'gemini' ? 'gemini-2.0-flash-lite' : 'gpt-4o-mini',
+        outputFormat: 'json' as const,
+        enableUsageMonitoring: true,
+      };
       
       const suggestion = await suggestTaskAttributes(
         title,

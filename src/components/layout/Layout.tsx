@@ -4,11 +4,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { Home, BarChart2, List, Trophy, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PointsDisplay from '../common/PointsDisplay';
-import UserMenu from '../auth/UserMenu';
-import AuthModal from '../auth/AuthModal';
-import AuthPrompt from '../auth/AuthPrompt';
 import SettingsPanel from '../settings/SettingsPanel';
-import { useAuth } from '../../hooks/useAuth';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,10 +12,6 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
-  const [showAuthPrompt, setShowAuthPrompt] = useState(!isAuthenticated && !localStorage.getItem('auth-prompt-dismissed'));
   const [showSettings, setShowSettings] = useState(false);
   
   const navItems = [
@@ -28,18 +20,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/rewards', icon: Trophy, label: 'Rewards' },
     { path: '/statistics', icon: BarChart2, label: 'Stats' },
   ];
-
-  const handleDismissAuthPrompt = () => {
-    setShowAuthPrompt(false);
-    localStorage.setItem('auth-prompt-dismissed', 'true');
-  };
-
-  const handleOpenAuth = (mode: 'signin' | 'signup') => {
-    setAuthMode(mode);
-    setShowAuthModal(true);
-    setShowAuthPrompt(false);
-    localStorage.setItem('auth-prompt-dismissed', 'true');
-  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -57,24 +37,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <PointsDisplay showProgress={false} size="md" />
-            <UserMenu 
-              onOpenSettings={() => setShowSettings(true)}
-              onOpenAuth={handleOpenAuth}
+            <button
+              onClick={() => setShowSettings(true)}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                <User className="w-5 h-5 text-red-600" />
+              </div>
+            </button>
             />
           </div>
         </div>
       </header>
       
       <main className="flex-1 pb-16">
-        <div className="max-w-4xl mx-auto px-4">
-          {showAuthPrompt && (
-            <AuthPrompt
-              onSignUp={() => handleOpenAuth('signup')}
-              onSignIn={() => handleOpenAuth('signin')}
-              onDismiss={handleDismissAuthPrompt}
-            />
-          )}
-        </div>
         {children}
       </main>
       
@@ -110,12 +86,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           })}
         </div>
       </nav>
-      
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        initialMode={authMode}
-      />
       
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
