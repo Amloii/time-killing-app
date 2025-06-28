@@ -40,7 +40,7 @@ export const WARRIORS: Warrior[] = [
     rarity: 'Rare',
     cost: 250,
     description: 'Master of lightning-fast strikes',
-    imageUrl: '/storm_blade.pngf',
+    imageUrl: '/storm_blade.png',
     animationUrl: '/storm_blade.png',
     unlocked: false
   },
