@@ -165,7 +165,7 @@ npm run lint      # Run ESLint
 
 Fight Mode was born at a Bolt hackathon as an exploration of how game mechanics can make personal productivity feel less like work and more like a quest.
 
-[GitHub](https://github.com/Amloii) · [LinkedIn](https://linkedin.com/in/danigdominguez) · [Portfolio](https://amloii.github.io)
+[GitHub](https://github.com/Amloii) · [LinkedIn](https://linkedin.com/in/danigdominguez) · [Portfolio](https://amloii-page.pages.dev)
 
 <br>
 
